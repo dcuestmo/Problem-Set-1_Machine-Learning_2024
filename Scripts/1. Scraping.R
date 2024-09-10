@@ -1,40 +1,36 @@
-install.packages("pacman")
---------------------
+#------------------------------------------------------------------------------#
+#----------------------------- Script 1. Scraping -----------------------------#
+#------------------------------------------------------------------------------#
 
-require(pacman)
-p_load(tidyverse,rvest)
+# El presente codigo carga la informacion de la Gran Encuesta Integrada de Hogares 
+# (GEIH) del repositorio del docente de la materia Ignacio Sarmiento 
 
-vignette("rvest")
-
-
+# 0. Se define el directorio de extraccion de informacion ----------------------
 url <- 'https://ignaciomsarmiento.github.io/GEIH2018_sample/'
-# Podemos ingresar a la pagina y observar como se encuentra la pagina
-browseURL(url)
+browseURL(url)     # Podemos ingresar a la pagina y observar como se encuentra la pagina
+vignette("rvest")  # Se carga la explicación de "rvest"
 
+# 1. Extraccion y manejo de la base de datos -----------------------------------
+my_html = read_html(url)  # Lectura del enlace
 
-# Lectura del enlace
-my_html = read_html(url)
-my_html
-
-
+# 1.1. Se extrae la informacion -------------------------------------------------
 # Extraemos una lista que contenga el atributo href de cada uno de los nodos <a> de en los elementos <li>
 links <- my_html%>%
   html_elements("li")%>%
   html_nodes("a")%>%
   html_attr("href")
-
 print(links)
 
-# Observamos que esta lista contiene solo las extensiones finales y no el link completo, ademas es necesario
+# Observamos que esta lista contiene solo las extensiones finales y no el link completo. Ademas es necesario
 # omitir el primer elemento de la lista correpondiente al index. Por tanto es necesario completar el link
+
 links <- paste0('https://ignaciomsarmiento.github.io/GEIH2018_sample/', links[-1])
 
-
+# 1.2 Se organiza la informacion en data.frame ---------------------------------
 
 tabla_final <- data.frame()
-
+# link = links[1]
 for (link in links) {
-  
   #Ahora se extrae la tabla de datos para cada link utilizando el tml referenciado por el div especifico de la tabla
   page <- read_html(link)
   referencia <- page %>%
@@ -51,30 +47,22 @@ for (link in links) {
   # Convertimos la tabla a un DataFrame
   tabla_chunk <- as.data.frame(chunk)
   print(paste("Total de columnas en este chunk:", ncol(tabla_chunk)))
-  
   tabla_final <- bind_rows(tabla_final, tabla_chunk)
 }
 
-
-
 # Observamos que el total de columnas en cada chunk es la misma que la tabla final, por lo cual
-# podemos asumir que no hay variables unicas en algun chunk o duplicados debido a la extracciÃ³n.
+# podemos asumir que no hay variables unicas en algun chunk o duplicados debido a la extraccion.
 ncol(tabla_final)
-
 
 #Visualizamos las primeras observaciones
 print(head(tabla_final))
 
+# 2. Se guarda la informacion --------------------------------------------------
+# Guardamos la tabla consolidada
+setwd(paste0(wd,"/Base_Datos"))
+fwrite(tabla_final,"Tabla_Final_GEIH.csv",row.names = FALSE)
 
-
-# Guardamos la tabal consolidada
-ruta_archivo <- file.path(getwd(), "tabla_final.csv")
-write.csv(tabla_final, ruta_archivo, row.names = FALSE)
-
-
-
-
-
+################################################################################
 #Cargue de librerias para manejo de los datos
 
 p_load(rio, # import/export data
