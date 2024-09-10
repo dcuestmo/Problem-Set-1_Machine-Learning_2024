@@ -30,8 +30,8 @@ p_load(rio,              # Importación y exportación sencilla de datos
        data.table)       # Manipulación eficiente de grandes conjuntos de datos
 
 # 1. Definicion del directorio -------------------------------------------------
-ifelse(grepl("Diego", getwd()),
-       wd <- "C:/Users/HP/OneDrive - Universidad Nacional de Colombia/Documentos/Diego/PEG/2024-2/Machine learning/Problem-Set-1_Machine-Learning_2024/Problem-Set-1_Machine-Learning_2024",
+ifelse(grepl("HP", getwd()),
+       wd <- "C:/Users/HP/OneDrive - Universidad Nacional de Colombia/Documentos/Diego/PEG/2024-2/Machine learning/Problem-Set-1_Machine-Learning_2024",
        ifelse(grepl("Juan", getwd()),
               wd <- "C:/Users/Juan/Documents/Problem_set_1",
               ifelse(grepl("juanp.rodriguez", getwd()),
