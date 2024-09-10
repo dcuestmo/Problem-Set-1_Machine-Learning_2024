@@ -4,36 +4,36 @@
 
 # El presente codigo permite:
 # 1: Cambiar el directorio entre cada uno de los colaboradores del proyecto
-# 2: Correr cada uno de los scripts utilizados en la resolución del problem set 1.
+# 2: Correr cada uno de los scripts utilizados en la resoluci?n del problem set 1.
 
 # 0. Se borra la memoria y se cargan los paquetes ------------------------------
 rm(list = ls())   # Borra la memoria
 
-# Se cargan los paquetes de interés
+# Se cargan los paquetes de inter?s
 library(pacman)
-p_load(rio,              # Importación y exportación sencilla de datos
-       tidyverse,        # Colección de paquetes para datos ordenados y gráficos (incluye ggplot2).
+p_load(rio,              # Importaci?n y exportaci?n sencilla de datos
+       tidyverse,        # Colecci?n de paquetes para datos ordenados y gr?ficos (incluye ggplot2).
        skimr,            # Resumen compacto y descriptivo de datos
-       visdat,           # Visualización de datos faltantes
-       corrplot,         # Gráficos de matrices de correlación
-       stargazer,        # Generación de tablas en formatos de salida como LaTeX, HTML o texto
+       visdat,           # Visualizaci?n de datos faltantes
+       corrplot,         # Gr?ficos de matrices de correlaci?n
+       stargazer,        # Generaci?n de tablas en formatos de salida como LaTeX, HTML o texto
        rvest,            # Herramientas para web scraping
        readxl,           # Importar archivos Excel
        writexl,          # Exportar archivos Excel
-       boot,             # Aplicación de métodos de remuestreo (bootstrapping)
-       ggpubr,           # Extensiones para facilitar la creación de gráficos en ggplot2
-       WVPlots,          # Gráficos para análisis de variables ponderadas
-       patchwork,        # Combinación y organización de gráficos
-       gridExtra,        # Disposición de gráficos en cuadrícula
-       ggplot2,          # Creación de gráficos mediante gramática de gráficos
-       caret,            # Evaluación y entrenamiento de modelos predictivos
-       data.table)       # Manipulación eficiente de grandes conjuntos de datos
+       boot,             # Aplicaci?n de m?todos de remuestreo (bootstrapping)
+       ggpubr,           # Extensiones para facilitar la creaci?n de gr?ficos en ggplot2
+       WVPlots,          # Gr?ficos para an?lisis de variables ponderadas
+       patchwork,        # Combinaci?n y organizaci?n de gr?ficos
+       gridExtra,        # Disposici?n de gr?ficos en cuadr?cula
+       ggplot2,          # Creaci?n de gr?ficos mediante gram?tica de gr?ficos
+       caret,            # Evaluaci?n y entrenamiento de modelos predictivos
+       data.table)       # Manipulaci?n eficiente de grandes conjuntos de datos
 
 # 1. Definicion del directorio -------------------------------------------------
 ifelse(grepl("HP", getwd()),
        wd <- "C:/Users/HP/OneDrive - Universidad Nacional de Colombia/Documentos/Diego/PEG/2024-2/Machine learning/Problem-Set-1_Machine-Learning_2024",
-       ifelse(grepl("Juan", getwd()),
-              wd <- "C:/Users/Juan/Documents/Problem_set_1",
+       ifelse(grepl("Juliet", getwd()),
+              wd <- "C:/Users/JULIETH/Documents/GitHub/Problem-Set-1_Machine-Learning_2024",
               ifelse(grepl("juanp.rodriguez", getwd()),
                      wd <- "C:/Users/juanp.rodriguez/Documents/GitHub/Problem_set_1",
                      ifelse(grepl("C:/Users/User", getwd()),
