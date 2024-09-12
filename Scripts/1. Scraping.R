@@ -60,12 +60,11 @@ ncol(tabla_final)
 print(head(tabla_final))
 
 # 2. Se guarda la informacion --------------------------------------------------
+
 # Guardamos la tabla consolidada
 setwd(paste0(wd,"/Base_Datos"))
 fwrite(tabla_final,"Tabla_Final_GEIH.csv",row.names = FALSE)
 export(tabla_final, "Tabla_webs.rds")
-
-
 
 # 3. Script de Filtro de la base y seleccion de variables ----------------------
 
