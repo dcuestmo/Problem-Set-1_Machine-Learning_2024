@@ -27,9 +27,11 @@ p_load(rio,              # Importaci?n y exportaci?n sencilla de datos
        gridExtra,        # Disposici?n de gr?ficos en cuadr?cula
        ggplot2,          # Creaci?n de gr?ficos mediante gram?tica de gr?ficos
        caret,            # Evaluaci?n y entrenamiento de modelos predictivos
+       visdat,           # Visualizar missings
+       patchwork,        # Diseño de graficos
        data.table)       # Manipulaci?n eficiente de grandes conjuntos de datos
 
-getwd()
+getwd() #Mirar directorio
 
 # 1. Definicion del directorio -------------------------------------------------
 
@@ -46,6 +48,7 @@ ifelse(grepl("HP", getwd()),
                                    wd <- "otro_directorio")))))
 
 # 2. Script de Web-scraping ----------------------------------------------------
+
 # El script: "01_web_scraping.R". Realiza el proceso de web scraping para conseguir los datos
 setwd(paste0(wd,"/scripts"))
 source("1. Scraping.R")
