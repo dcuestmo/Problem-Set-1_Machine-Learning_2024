@@ -45,7 +45,9 @@ ifelse(grepl("HP", getwd()),
                             wd <- "C:/Users/User/OneDrive - Universidad de los Andes/Big Data y Machine Learning/Problem_set_1/Problem_set_1",
                             ifelse(grepl("/Users/aleja/", getwd()),
                                    wd <- "Directorio",
-                                   wd <- "otro_directorio")))))
+                                   ifelse(grepl("Steven Ramirez", getwd()),
+                                   wd <- "C:/Users/Steven Ramirez/OneDrive - Universidad de los Andes/Grupo - Econometría 1/Escritorio/Big Data/Problem-Set-1_Machine-Learning_2024",
+                                   wd <- "otro_directorio"))))))
 
 # 2. Script de Web-scraping ----------------------------------------------------
 
