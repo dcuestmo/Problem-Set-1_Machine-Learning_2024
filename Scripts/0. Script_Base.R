@@ -29,12 +29,15 @@ p_load(rio,              # Importaci?n y exportaci?n sencilla de datos
        caret,            # Evaluaci?n y entrenamiento de modelos predictivos
        data.table)       # Manipulaci?n eficiente de grandes conjuntos de datos
 
+getwd()
+
 # 1. Definicion del directorio -------------------------------------------------
+
 ifelse(grepl("HP", getwd()),
        wd <- "C:/Users/HP/OneDrive - Universidad Nacional de Colombia/Documentos/Diego/PEG/2024-2/Machine learning/Problem-Set-1_Machine-Learning_2024",
-       ifelse(grepl("Juliet", getwd()),
+       ifelse(grepl("JULIETH", getwd()),
               wd <- "C:/Users/JULIETH/Documents/GitHub/Problem-Set-1_Machine-Learning_2024",
-              ifelse(grepl("juanp.rodriguez", getwd()),
+              ifelse(grepl("Jorge", getwd()),
                      wd <- "C:/Users/juanp.rodriguez/Documents/GitHub/Problem_set_1",
                      ifelse(grepl("C:/Users/User", getwd()),
                             wd <- "C:/Users/User/OneDrive - Universidad de los Andes/Big Data y Machine Learning/Problem_set_1/Problem_set_1",
@@ -45,5 +48,6 @@ ifelse(grepl("HP", getwd()),
 # 2. Script de Web-scraping ----------------------------------------------------
 # El script: "01_web_scraping.R". Realiza el proceso de web scraping para conseguir los datos
 setwd(paste0(wd,"/scripts"))
-source("1. Web_Scraping.R")
+source("1. Scraping.R")
+
 
