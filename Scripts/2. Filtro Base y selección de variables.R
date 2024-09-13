@@ -27,13 +27,13 @@ nrow(data_webs) #16542 observaciones que cumplen con estas caracteristicas
 
 data_webs <- data_webs %>%
   select(directorio, secuencia_p, orden,  # variables de referenciación
-         age, sex, oficio, estrato1, p6050, # variables caracteristicas
-         relab, cuentaPropia, totalHoursWorked, sizeFirm, # caracteristicas empleo
-          y_otros_m, y_total_m, y_total_m_ha,  #ingresos
+         age, sex, oficio, estrato1, p6050, # variables características
+         relab, cuentaPropia, totalHoursWorked, sizeFirm, # características empleo
+         y_otros_m, y_total_m, y_total_m_ha,  # ingresos
          fex_c, # factor de expansión
-         hoursWorkUsual, formal, informal,
-         Experiencia=p6426,maxEducLevel #Adicionales
-  )%>%
+         hoursWorkUsual, formal, informal,  # más variables
+         p6426, maxEducLevel # adicionales
+  ) %>%
   rename(
     Direccion = directorio,
     Secuencia = secuencia_p,
@@ -46,14 +46,15 @@ data_webs <- data_webs %>%
     Tipo_ocupacion = relab,
     Independiente = cuentaPropia,
     Horas_trabajadas = totalHoursWorked,
-    Horas_trabajadas_sem =hoursWorkUsual,
+    Horas_trabajadas_sem = hoursWorkUsual,
     Tamaño_empresa = sizeFirm,
     Ingreso_total = y_total_m,
     Ingreso_hora = y_total_m_ha,
     Otros_ingresos = y_otros_m,
     Nivel_educ = maxEducLevel,
-    Factor_expansion = fex_c)
-
+    Experiencia = p6426,
+    Factor_expansion = fex_c
+  )
 
 #Crear la variable dummy jefe de hogar y experiencia en años
 data_webs$dummy_jefe <- ifelse(data_webs$Posicion_hogar == 1, 1, 0)

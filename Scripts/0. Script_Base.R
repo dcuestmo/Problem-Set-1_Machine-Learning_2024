@@ -21,7 +21,6 @@ p_load(rio,              # Importaci?n y exportaci?n sencilla de datos
        readxl,           # Importar archivos Excel
        writexl,          # Exportar archivos Excel
        boot,             # Aplicaci?n de m?todos de remuestreo (bootstrapping)
-       WVPlots,          # Gr?ficos para an?lisis de variables ponderadas
        patchwork,        # Combinaci?n y organizaci?n de gr?ficos
        gridExtra,        # Disposici?n de gr?ficos en cuadr?cula
        ggplot2,          # Creaci?n de gr?ficos mediante gram?tica de gr?ficos
@@ -29,8 +28,7 @@ p_load(rio,              # Importaci?n y exportaci?n sencilla de datos
        visdat,           # Visualizar missings
        patchwork,        # Diseño de graficos
        naniar,
-       MASS,
-       data.table)       # Manipulaci?n eficiente de grandes conjuntos de datos
+       MASS)       # Manipulaci?n eficiente de grandes conjuntos de datos
 
 getwd() #Mirar directorio
 
