@@ -1,7 +1,7 @@
 # Author: Juliet Molano
 
 #------------------------------------------------------------------------------#
-#---------Script 2. Filtro y seleccion de variables----------------------------#
+#-------------------- Script 2. Filtro y seleccion de variables----------------#
 #------------------------------------------------------------------------------#
 
 # 1. Cargar base de datos  -----------------------------------------------------
@@ -9,15 +9,15 @@
 setwd(paste0(wd,"/Base_Datos")) #DirectorioS
 data_webs = import(file = "Tabla_Final_GEIH.csv")
 
-names(data_webs) #Mirar nombres de las variables
-str(data_webs) #Mirar bases de datos
-summary(data_webs$depto) ## corroborando que sea Bogotá
-table(data_webs$ocu) ##La base tiene ocupados y no ocupados
+names(data_webs)                     # Mirar nombres de las variables
+str(data_webs)                       # Mirar tipo de variables
+unique(data_webs$dominio)            # corroborando que sea Bogota
+table(data_webs$ocu)                 # La base tiene ocupados (1) y no ocupados (0)
 skim(data_webs) %>% head()
 
 # 2. Filtrar la base de datos ---------------------------------------------------
 
-#Filtrar la base para mayores de 18 años
+#Filtrar la base para mayores de 18 anios
 data_webs <- data_webs %>%
   filter(age>=18 & ## Mayores de edad
            ocu==1) ## Empleados
