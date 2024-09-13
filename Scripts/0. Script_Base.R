@@ -34,7 +34,7 @@ getwd() #Mirar directorio
 
 # 1. Definicion del directorio -------------------------------------------------
 
-ifelse(grepl("HP", getwd()),
+ifelse(grepl("HP", getwd()), # Diego
        wd <- "C:/Users/HP/OneDrive - Universidad Nacional de Colombia/Documentos/Diego/PEG/2024-2/Machine learning/Problem-Set-1_Machine-Learning_2024",
        ifelse(grepl("JULIETH", getwd()), #Juliet1
               wd <- "C:/Users/JULIETH/Documents/GitHub/Problem-Set-1_Machine-Learning_2024",
@@ -54,4 +54,6 @@ ifelse(grepl("HP", getwd()),
 setwd(paste0(wd,"/scripts"))
 source("1. Scraping.R")
 
+setwd(paste0(wd,"/scripts"))
+source("2. Filtro Base y seleccion de variables.R")
 
