@@ -8,7 +8,8 @@ setwd(paste0(wd,"/Base_Datos"))
 data_webs <- import(file = "base_final.rds")
 
 # 1. Grafica de correlacion entre ingreso y edad ------------------------------
-  
+summary(data_webs$Ingreso_hora_imp) #imputado con valores atipicos
+summary(data_webs$Ingreso_hora_imp2) #imputado SIN valores atipicos
 scatter_plot <- ggplot(data = data_webs, aes(x = Edad, y = log_ing_h_imp2)) +
   geom_point(color = "grey") +  # Puntos en azul
   labs(title = "", 
@@ -27,9 +28,10 @@ dev.off() # Cierra la grafica
   stargazer(model_Age_wage, type = "text") # Modelo simple
   
   #ii. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (con controles)
-  model_Age_wage_cont1 <- lm(log_ing_h_imp2 ~ Edad + Edad2 + Sexo + Tamaño_empresa + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas + Experiencia_años, data = data_webs) #Realizamos la regresión
+  model_Age_wage_cont1 <- lm(log_ing_h_imp2 ~ Edad + Edad2 + Sexo + Estrato + dummy_jefe + edu_factor + Tamaño_empresa + formal + Independiente + oficio_factor  + Horas_trabajadas + Experiencia_años, data = data_webs) #Realizamos la regresión
   summary(model_Age_wage_cont1)
   stargazer(model_Age_wage_cont1, type = "text") # Modelo con controles
+
   
   # Generar tablas de regresion
   setwd(paste0(wd,"/Latex"))
@@ -102,7 +104,7 @@ dev.off() # Cierra la grafica
   #---- Correr nuevamente el modelo -------#
 
   #Modelo de prueba 2
-  n_model_Age_wage_cont1 <- lm(log_ing_h_imp ~ Edad + Edad2 + Sexo + Tamaño_empresa + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas + Experiencia_años, data = data_webs2) #Realizamos la regresión
+  n_model_Age_wage_cont1 <- lm(log_ing_h_imp2 ~ Edad + Edad2 + Sexo + Estrato + dummy_jefe + edu_factor + Tamaño_empresa + formal + Independiente + oficio_factor  + Horas_trabajadas + Experiencia_años, data = data_webs2) #Realizamos la regresión
   summary(n_model_Age_wage_cont1)
   stargazer(n_model_Age_wage_cont1, type = "text") # Modelo con controles
   
@@ -124,7 +126,7 @@ dev.off() # Cierra la grafica
   dev.off() # Cierra la grafica
   
   ##Residuo estudentizado
-  data_webs2 <-data_webs2 %>% mutate(m1_std_residuals2= studres(n_model_Age_wage_cont1))
+  data_webs2 <-data_webs2 %>% mutate(m1_std_residuals2 = studres(n_model_Age_wage_cont1))
 
   ggplot(data_webs2 , aes(y = m1_std_residuals2 , x = id , color= Edad, shape= as.factor(Sexo) )) +
     geom_point() + # add points
@@ -137,7 +139,7 @@ dev.off() # Cierra la grafica
   data_webs2 <- data_webs2 %>% filter(m1_std_residuals2<2 & m1_std_residuals2>-2 )
   
   # Correr nuevo the model
-  n2_model_Age_wage_cont1 <- lm(log_ing_h_imp ~ Edad + Edad2 + Sexo + Tamaño_empresa + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas + Experiencia_años, data = data_webs2) #Realizamos la regresión
+  n2_model_Age_wage_cont1 <- lm(log_ing_h_imp2 ~ Edad + Edad2 + Sexo + Estrato + dummy_jefe + edu_factor + Tamaño_empresa + formal + Independiente + oficio_factor  + Horas_trabajadas + Experiencia_años, data = data_webs2) #Realizamos la regresión
   summary(n2_model_Age_wage_cont1)
   stargazer(n2_model_Age_wage_cont1, type = "text") # Modelo con controles
   
@@ -198,7 +200,7 @@ dev.off() # Cierra la grafica
 #---------- Mirar prediccion -------------#
   
   # Realiza predicciones con el modelo
-  data2$predicted <- predict(model_Age_wage1, newdata = data2)
+  data2$predicted <- predict(model_Age_wage, newdata = data2)
   data2$predicted_cont <- predict(n2_model_Age_wage_cont3, newdata = data2)
   
   #Modelo predicted vs salario 

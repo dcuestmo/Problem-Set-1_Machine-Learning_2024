@@ -203,18 +203,11 @@ summary(data_webs$Nivel_educ)
   #ii. Tramiento valores atipicos
   
   #. Ingreso por hora
-  up <- quantile(data_webs$Ingreso_hora_imp, 0.975, na.rm=T)
+  up <- quantile(data_webs$Ingreso_hora_imp, 0.99, na.rm=T)
   data_webs <- data_webs %>% mutate(Ingreso_hora_imp2=  ifelse( test=( Ingreso_hora_imp>= up), 
                                                                 yes= up,
                                                                 no= Ingreso_hora_imp ))
-  #. Edad
-  
-  
-  #. Experiencia
-  
-  #.Horas
-  
-  
+
   # 6. Creacion variables nuevas -----------------------------------------------
   
   data_webs$log_ing_h_imp=log(data_webs$Ingreso_hora_imp) # con valores atipicos

@@ -27,7 +27,8 @@ p_load(rio,              # Importaci?n y exportaci?n sencilla de datos
        caret,            # Evaluaci?n y entrenamiento de modelos predictivos
        visdat,           # Visualizar missings
        patchwork,        # Diseño de graficos
-       data.table)       # Manipulaci?n eficiente de grandes conjuntos de datos
+       data.table,       # Manipulaci?n eficiente de grandes conjuntos de datos
+       MASS)             # For post regression calculations      
 
 getwd() #Mirar directorio
 
