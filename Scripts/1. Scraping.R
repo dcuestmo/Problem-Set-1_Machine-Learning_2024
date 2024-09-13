@@ -66,11 +66,6 @@ setwd(paste0(wd,"/Base_Datos"))
 fwrite(tabla_final,"Tabla_Final_GEIH.csv",row.names = FALSE)
 export(tabla_final, "Tabla_webs.rds")
 
-# 3. Script de Filtro de la base y seleccion de variables ----------------------
-
-# El script: "01_web_scraping.R". Realiza el proceso de web scraping para conseguir los datos
-setwd(paste0(wd,"/scripts"))
-source("2. Filtro Base y selección de variables.R")
 
 
 
