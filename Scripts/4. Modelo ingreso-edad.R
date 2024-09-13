@@ -19,80 +19,66 @@ png("Caja_sexo.png") # Formato grafica
 scatter_plot
 dev.off() # Cierra la grafica
 
+ #2. Definir los posibles predictores de la base de datos---------------------- 
 
- #2. Definir los posibles predictores de la base de datos: 
-
- # Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (sin controles)
-  model_Age_wage1 <- lm(log_ing_h_imp ~ Edad + Edad2, data = data) #Realizamos la regresión
-  summary(model_Age_wage1)
-  stargazer(model_Age_wage1, type = "text") # Modelo simple
+ #i. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (sin controles)
+  model_Age_wage <- lm(log_ing_h_imp2 ~ Edad + Edad2, data = data_webs) #Realizamos la regresión
+  summary(model_Age_wage)
+  stargazer(model_Age_wage, type = "text") # Modelo simple
   
-  
-  #---
-  modelo1 <- lm(log_ing_h_imp ~ Edad + Edad2 + Sexo + dummy_jefe + formal + Tamaño_empresa + Estrato + Independiente + oficio_factor + edu_factor + Horas_trabajadas , data = data) #Realizamos la regresión
-  summary(modelo1)
-  stargazer(modelo1, type = "text") # Modelo simple
-
-  
-  # Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (con controles)
-  model_Age_wage_cont3 <- lm(log_ing_h_imp ~ Edad + Edad2 + Sexo + Tamaño_empresa + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas + Experiencia_años, data = data) #Realizamos la regresión
-  summary(model_Age_wage_cont3)
-  stargazer(model_Age_wage_cont3, type = "text") # Modelo con controles
+  #ii. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (con controles)
+  model_Age_wage_cont1 <- lm(log_ing_h_imp2 ~ Edad + Edad2 + Sexo + Tamaño_empresa + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas + Experiencia_años, data = data_webs) #Realizamos la regresión
+  summary(model_Age_wage_cont1)
+  stargazer(model_Age_wage_cont1, type = "text") # Modelo con controles
   
   # Generar tablas de regresion
-  stargazer(model_Age_wage_cont3, type = "text", keep = c("Edad", "Edad2") ) #Modelo completo
-  stargazer(model_Age_wage1, model_Age_wage_cont3,
+  setwd(paste0(wd,"/Latex"))
+  stargazer(model_Age_wage, type = "text", keep = c("Edad", "Edad2") ) #Modelo completo
+  stargazer(model_Age_wage, model_Age_wage_cont1,
             keep = c("Edad", "Edad2"),
             dep.var.caption  = "Logaritmo del salario",
             column.labels   = c("Sin controles", "Con controles"),
             covariate.labels = c("Edad", "Edad al cuadrado"),
-            type="latex",out = "C:/Users/JULIETH/Desktop/Big data/latex/modelos.tex")
+            type="latex",out = "modelos_edad_ingresos.tex")
   
   # Leer el contenido del archivo
-  regression_table <- readLines("C:/Users/JULIETH/Desktop/Big data/latex/modelos.tex")
-  
-  # Reemplazar "Observations" con "Observaciones"
-  regression_table <- gsub("Observations", "Observaciones", regression_table)
+  regression_table <- readLines("modelos_edad_ingresos.tex")
+  regression_table <- gsub("Observations", "Observaciones", regression_table) #Reemplazar "Observations" con "Observaciones"
   regression_table <- gsub("Adjusted R$^{2}$ ", "R$^{2}$ ajustado", regression_table)
-  
-  # Escribir el contenido modificado de nuevo al archivo
-  writeLines(regression_table, "C:/Users/JULIETH/Desktop/Big data/latex/modelos.tex")
+  writeLines(regression_table, "modelos_edad_ingresos.tex") #Escribir el contenido modificado de nuevo al archivo
   
   
-  #---------------------------------------------------------------------------#
-  #                      Observaciones influyentes
-  #---------------------------------------------------------------------------#
-  
+  #3. Analisis de variables influyentes ----------------------------------------
   
   ## leverage 
-  data <- data %>% 
+  data_webs <- data_webs %>% 
     ungroup() %>%
-    mutate(leverage = hatvalues(model_Age_wage_cont3))  # Calcula los valores leverage
-  length(hatvalues(model_Age_wage_cont3))
+    mutate(leverage = hatvalues(model_Age_wage_cont1))  # Calcula los valores leverage
+  length(hatvalues(model_Age_wage_cont1))
   
   ## residuals
-  data <- data %>%
+  data_webs <- data_webs %>%
     ungroup() %>%
-    mutate(residuals = residuals(model_Age_wage_cont3))  
-  length(residuals(model_Age_wage_cont3))
+    mutate(residuals = residuals(model_Age_wage_cont1))  
+  length(residuals(model_Age_wage_cont1))
   
   
   {
-  N <- nrow(data)
-  
-  data$Secuencia <- seq(1 , N)
-  a<- ggplot(data , aes(y = leverage , x = id , color= profesion, shape= as.factor(sexo) )) +
+  N <- nrow(data_webs)
+  data_webs$id <- seq(1 , N)
+    
+  a<- ggplot(data_webs , aes(y = leverage , x = id , color= Edad , shape= as.factor(Sexo) )) +
     geom_point() + # add points
     theme_bw() + #black and white theme
-    labs(x = "Observations",  
+    labs(x = "Observaciones",  
          y = "Leverage",
          title = "") # labels
+  a
   
-  
-  b<- ggplot(data , aes(y = leverage , x = residuals  )) +
+  b<- ggplot(data_webs , aes(y = leverage , x = residuals )) +
     geom_point() + # add points
     theme_bw() + #black and white theme
-    labs(x = "Residuals",  
+    labs(x = "Residuales",  
          y = "Leverage",
          title = "") # labels
   b
@@ -102,7 +88,7 @@ dev.off() # Cierra la grafica
   }
 
   #Calcula el apalancamiento medio
-  p <- mean(data$leverage)
+  p <- mean(data_webs$leverage)
   p
   
   #punto de corte
@@ -110,66 +96,60 @@ dev.off() # Cierra la grafica
   cutt
   
   #dejar las observaciones que se consideran influyentes
-  data2 <- data %>%
+  data_webs2 <- data_webs %>%
     filter(leverage <= cutt)
   
   #---- Correr nuevamente el modelo -------#
 
   #Modelo de prueba 2
-  n_model_Age_wage_cont3 <- lm(log_ing_h_imp ~ Edad + Edad2 + Sexo + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas, data = data2) #Realizamos la regresión
-  summary(n_model_Age_wage_cont3)
-  stargazer(n_model_Age_wage_cont3, type = "text") # Modelo con controles
+  n_model_Age_wage_cont1 <- lm(log_ing_h_imp ~ Edad + Edad2 + Sexo + Tamaño_empresa + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas + Experiencia_años, data = data_webs2) #Realizamos la regresión
+  summary(n_model_Age_wage_cont1)
+  stargazer(n_model_Age_wage_cont1, type = "text") # Modelo con controles
   
-  data2 <- data2 %>%
+  data_webs2 <- data_webs2 %>%
     ungroup() %>%
-    mutate(residuals2 = residuals(n_model_Age_wage_cont3))  
-  length(residuals(n_model_Age_wage_cont3))
+    mutate(residuals2 = residuals(n_model_Age_wage_cont1))  
+  length(residuals(n_model_Age_wage_cont1))
   
-#---------------------------------------------------------------------------#
-#                      VALORES ATIPICOS
-#---------------------------------------------------------------------------#
+  #4. Analisis de valores atipicos del modelo-----------------------------------
+  
   
 #Grafica residuos del modelo
-  ggplot(data= data2, 
+  residuos <- ggplot(data = data_webs2, 
          mapping = aes(x=residuals2)) +
     theme_bw() + 
     geom_density()
+  png("residuos_sin_var_influy") # Formato grafica
+  residuos
+  dev.off() # Cierra la grafica
   
-  #ID
-  #data <- data %>%
-   # mutate(id = str_c(Direccion, Secuencia, Orden, sep = "_"))
-  
-
   ##Residuo estudentizado
-  data2 <-data2 %>% mutate(m1_std_residuals2= studres(n_model_Age_wage_cont3))
+  data_webs2 <-data_webs2 %>% mutate(m1_std_residuals2= studres(n_model_Age_wage_cont1))
 
-  ggplot(data , aes(y = m1_std_residuals , x = id , color= Edad, shape= as.factor(gender) )) +
+  ggplot(data_webs2 , aes(y = m1_std_residuals2 , x = id , color= Edad, shape= as.factor(Sexo) )) +
     geom_point() + # add points
     theme_bw() + #black and white theme
-    labs(x = "Observations",  
-         y = "Residuals",
+    labs(x = "Observaciones",  
+         y = "Residuos",
          title = "") # labels
   
   #Eliminacion de valores atipicos
-  data2 <- data2 %>% filter(m1_std_residuals2<2 & m1_std_residuals2>-2 )
+  data_webs2 <- data_webs2 %>% filter(m1_std_residuals2<2 & m1_std_residuals2>-2 )
   
   # Correr nuevo the model
-  n2_model_Age_wage_cont3 <- lm(log_ing_h_imp ~ Edad + Edad2 + Sexo + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas, data = data2) #Realizamos la regresión
-  summary(n2_model_Age_wage_cont3)
-  stargazer(n2_model_Age_wage_cont3, type = "text") # Modelo con controles
+  n2_model_Age_wage_cont1 <- lm(log_ing_h_imp ~ Edad + Edad2 + Sexo + Tamaño_empresa + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas + Experiencia_años, data = data_webs2) #Realizamos la regresión
+  summary(n2_model_Age_wage_cont1)
+  stargazer(n2_model_Age_wage_cont1, type = "text") # Modelo con controles
   
+
+  #5. Valor maximo -----------------------------------------------------------
   
-  
-  #--------------------------------------------------------------------------#
-  # --------------------VALOR MAXIMO - PICO----------------------------------#
-  #--------------------------------------------------------------------------#
-  
-  #1. MODELO SIN CONTROLES
+  #i. MODELO SIN CONTROLES
   
   ## FORMA 1##
   
   #Obtener la edad máxima en la que el incremento en el salario empieza a disminuir(SC)
-  matrix_coef <- summary(model_Age_wage1)$coefficients
+  matrix_coef <- summary(model_Age_wage)$coefficients
   matrix_coef
   coeficiente_edad<-my_estimates <- matrix_coef[2, 1] 
   coeficiente_edad2<-my_estimates <- matrix_coef[3, 1] 
@@ -179,13 +159,13 @@ dev.off() # Cierra la grafica
   edad_peak<-(-coeficiente_edad/(2*coeficiente_edad2))
   edad_peak
   
-  # # FORMA 12##
+  ## FORMA 2##
   Peak_age_fun <- function(age_1, age_2) {
     Edad_P<- -(age_1/(2*age_2))
     return (Edad_P)
   }
   
-  Peak_age_mod_simple <- Peak_age_fun(age_1 = model_Age_wage1$coefficients[2],age_2 = model_Age_wage1$coefficients[3])
+  Peak_age_mod_simple <- Peak_age_fun(age_1 = model_Age_wage$coefficients[2],age_2 = model_Age_wage$coefficients[3])
   Peak_age_mod_simple
   
   #2. MODELO CON CONTROLES
@@ -193,7 +173,7 @@ dev.off() # Cierra la grafica
   #  FORMA 1
   
   #Obtener la edad máxima en la que el incremento en el salario empieza a disminuir(C)
-  matrix_coef <- summary(n2_model_Age_wage_cont3)$coefficients
+  matrix_coef <- summary(n2_model_Age_wage_cont1)$coefficients
   matrix_coef
   coeficiente_edad_c<-my_estimates <- matrix_coef[2, 1] 
   coeficiente_edad_c2<-my_estimates <- matrix_coef[3, 1] 
@@ -209,7 +189,7 @@ dev.off() # Cierra la grafica
     return (Edad_P)
   }
   
-  Peak_age_mod_controles <- Peak_age_fun(age_1 = n2_model_Age_wage_cont3$coefficients[2],age_2 = n2_model_Age_wage_cont3$coefficients[3])
+  Peak_age_mod_controles <- Peak_age_fun(age_1 = n2_model_Age_wage_cont1$coefficients[2],age_2 = n2_model_Age_wage_cont1$coefficients[3])
   Peak_age_mod_controles
   
   
