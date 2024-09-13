@@ -144,9 +144,9 @@ summary(data_webs$Nivel_educ)
 
   ## Salarios por hora imputado - en logaritmo
   summary(data_webs$Ingreso_hora_imp) #Mirar minimos y maximos de edad
-  box_ingr_h <- boxplot(data_webs$Ingreso_hora_imp,
+  b1 <- boxplot(data_webs$Ingreso_hora_imp,
                         main = "",      # Título
-                        ylab = "log(ingreso por hora)",                  # Etiqueta eje Y
+                        ylab = "ingreso por hora",                  # Etiqueta eje Y
                         col = "gray",                          # Color de la caja gris
                         border = "black",                      # Color del borde negro
                         notch = TRUE,                          # Agregar muescas para intervalos de confianza
@@ -159,11 +159,11 @@ summary(data_webs$Nivel_educ)
                         cex.axis = 0.8,                        # Tamaño de la fuente para los números del eje
                         cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
                         cex.main = 0.8)                        # Tamaño de la fuente para el título
-  box_ingr_h
-
+  b1
+  
   ## Edad
   summary(data_webs$Edad) #Mirar minimos y maximos de edad
-  box_edad <- boxplot(data_webs$Edad,
+  b2 <- boxplot(data_webs$Edad,
                       main = "",      # Título
                       ylab = "Edad (años)",                  # Etiqueta eje Y
                       col = "gray",                          # Color de la caja gris
@@ -179,11 +179,11 @@ summary(data_webs$Nivel_educ)
                       cex.axis = 0.8,                        # Tamaño de la fuente para los números del eje
                       cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
                       cex.main = 0.8)                        # Tamaño de la fuente para el título
-  box_edad
+  b2
 
   ## Experiencia
   summary(data_webs$Experiencia_años) #Mirar minimos y maximos de edad
-  box_exp <- boxplot(data_webs$Experiencia_años,
+  b3 <- boxplot(data_webs$Experiencia_años,
                       main = "",      # Título
                       ylab = "Años experiencia",                  # Etiqueta eje Y
                       col = "gray",                          # Color de la caja gris
@@ -198,12 +198,12 @@ summary(data_webs$Nivel_educ)
                       cex.axis = 0.8,                        # Tamaño de la fuente para los números del eje
                       cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
                       cex.main = 0.8)                        # Tamaño de la fuente para el título
-  box_exp
+  b3
 
 
   ## Horas trabajadas
   summary(data_webs$Horas_trabajadas) #Mirar minimos y maximos de edad
-  box_horas <- boxplot(data_webs$Horas_trabajadas,
+  b4 <- boxplot(data_webs$Horas_trabajadas,
                         main = "",      # Título
                         ylab = "Horas trabajadas",                  # Etiqueta eje Y
                         col = "gray",                          # Color de la caja gris
@@ -218,14 +218,12 @@ summary(data_webs$Nivel_educ)
                         cex.axis = 0.8,                        # Tamaño de la fuente para los números del eje
                         cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
                         cex.main = 0.8)                        # Tamaño de la fuente para el título
-  box_horas
+  b4
 
   
-  #Unir las gráficas en sola
-  (box_ingr_h | box_edad)/(box_exp | box_horas)
+  # Combinar los gráficos en una cuadrícula
+  #combined_plot <- (b1 | b2) / (b3 | b4)
   
-  
- 
   #ii. Tramiento valores atipicos
   
   #. Ingreso por hora
@@ -244,7 +242,9 @@ summary(data_webs$Nivel_educ)
   
   data_webs$log_ing_h_imp=log(data_webs$Ingreso_hora_imp) # con valores atipicos
   data_webs$log_ing_h_imp2=log(data_webs$Ingreso_hora_imp2) #sin valores atipicos
-  
+  data_webs <- data_webs %>% mutate (oficio_factor= as.factor(Profesion))
+  data_webs <- data_webs %>% mutate (edu_factor= as.factor(Nivel_educ))
+
   data_webs <- data_webs %>%
     mutate( #logaritmo del salario por hora imputado
       Edad2 = Edad^2, #Edad al cuadrado 
