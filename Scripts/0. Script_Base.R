@@ -11,24 +11,25 @@ rm(list = ls())   # Borra la memoria
 
 # Se cargan los paquetes de inter?s
 library(pacman)
-p_load(rio,              # Importaci?n y exportaci?n sencilla de datos
-       tidyverse,        # Colecci?n de paquetes para datos ordenados y gr?ficos (incluye ggplot2).
+p_load(rio,              # Importacion y exportacion sencilla de datos
+       tidyverse,        # Coleccion de paquetes para datos ordenados y graficos (incluye ggplot2).
        skimr,            # Resumen compacto y descriptivo de datos
-       visdat,           # Visualizaci?n de datos faltantes
-       corrplot,         # Gr?ficos de matrices de correlaci?n
-       stargazer,        # Generaci?n de tablas en formatos de salida como LaTeX, HTML o texto
+       visdat,           # Visualizacion de datos faltantes
+       corrplot,         # Graficos de matrices de correlacion
+       stargazer,        # Generacion de tablas en formatos de salida como LaTeX, HTML o texto
        rvest,            # Herramientas para web scraping
        readxl,           # Importar archivos Excel
        writexl,          # Exportar archivos Excel
-       boot,             # Aplicaci?n de m?todos de remuestreo (bootstrapping)
-       patchwork,        # Combinaci?n y organizaci?n de gr?ficos
-       gridExtra,        # Disposici?n de gr?ficos en cuadr?cula
-       ggplot2,          # Creaci?n de gr?ficos mediante gram?tica de gr?ficos
-       caret,            # Evaluaci?n y entrenamiento de modelos predictivos
+       boot,             # Aplicacion de m?todos de remuestreo (bootstrapping)
+       patchwork,        # Combinacion y organizacion de graficos
+       gridExtra,        # Disposicion de graficos en cuadr?cula
+       ggplot2,          # Creacion de graficos mediante gramatica de graficos
+       caret,            # Evaluacion y entrenamiento de modelos predictivos
        visdat,           # Visualizar missings
-       patchwork,        # DiseÃ±o de graficos
-       data.table,       # Manipulaci?n eficiente de grandes conjuntos de datos
-       MASS)             # For post regression calculations      
+       patchwork,        # Diseño de graficos
+       data.table,       # Manipulacion eficiente de grandes conjuntos de datos
+       MASS,             # For post regression calculations
+       dplyr)            # For post regression calculations      
 
 getwd() #Mirar directorio
 
