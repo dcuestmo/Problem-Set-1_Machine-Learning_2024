@@ -78,7 +78,7 @@ vis_miss(data_table_missing) +
         plot.subtitle = element_text(hjust = 0.5)) # Centra el subtítulo
 dev.off() # Cierra la grafica
 #vis_dat(data_table_missing) # Opcion 2
-#vis_miss(data_table_missing ,sort_miss = TRUE, cluster = TRUE) # Opcion 3
+vis_miss(data_table_missing ,sort_miss = TRUE, cluster = TRUE) # Opcion 3
 
 
 #ii. Tabla porcentaje de Missing values
