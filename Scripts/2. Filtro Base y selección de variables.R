@@ -26,13 +26,11 @@ nrow(data_webs) #16542 observaciones que cumplen con estas caracteristicas
 # 3. Seleccion de las variables de interes --------------------------------------
 
 data_webs <- data_webs %>%
-  select(directorio, secuencia_p, orden,  # variables de referenciación
-         age, sex, oficio, estrato1, p6050, # variables características
-         relab, cuentaPropia, totalHoursWorked, sizeFirm, # características empleo
-         y_otros_m, y_total_m, y_total_m_ha,  # ingresos
-         fex_c, # factor de expansión
-         hoursWorkUsual, formal, informal,  # más variables
-         p6426, maxEducLevel # adicionales
+  select(directorio, secuencia_p, orden,  #variables de identificacion
+         age, sex, oficio, estrato1, p6050, maxEducLevel,  #caracteristicas socioeconomicas
+         relab, cuentaPropia, totalHoursWorked, sizeFirm, hoursWorkUsual, 
+         y_otros_m, y_total_m, y_total_m_ha, fex_c, 
+         formal, informal, p6426
   ) %>%
   rename(
     Direccion = directorio,
