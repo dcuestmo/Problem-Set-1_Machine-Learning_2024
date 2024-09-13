@@ -22,6 +22,7 @@ p_load(tidyverse , # tidy-data
        corrplot, ## Correlation Plots
        stargazer,
        ggpubr,
+       patchwork,
        naniar) ## tables/output to TEX.
 
 

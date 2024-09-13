@@ -59,6 +59,11 @@ data_webs <- data_webs %>%
     Nivel_educ = maxEducLevel,
     Factor_expansion = fex_c)
 
+
+#Crear la variable dummy jefe de hogar y experiencia en años
+data_webs$dummy_jefe <- ifelse(data_webs$Posicion_hogar == 1, 1, 0)
+data_webs <- data_webs %>% 
+  mutate(Experiencia_años = Experiencia/12)
                 
 # 4. Analisis de missings ------------------------------------------------------
 
@@ -66,19 +71,18 @@ data_webs <- data_webs %>%
 data_table_missing <- data_webs %>% 
   select(Direccion, Secuencia, Orden, Edad, Sexo, Profesion, formal,
          Estrato, Independiente, Horas_trabajadas, Tamaño_empresa, 
-         Ingreso_total, Ingreso_hora, Otros_ingresos)
+         Ingreso_total, Ingreso_hora, Otros_ingresos, Experiencia_años, dummy_jefe)
 
 ## Grafica general
 setwd(paste0(wd,"/Graficas"))
 png("grafica_missing.png") # Formato grafica
-vis_miss(data_table_missing) +
-  theme_minimal() +
+m1 <-vis_miss(data_table_missing) +
   theme(axis.text.y = element_text(angle = 90, hjust = 1), # Coloca las etiquetas del eje Y en vertical
         plot.title = element_text(hjust = 0.5), # Centra el título
         plot.subtitle = element_text(hjust = 0.5)) # Centra el subtítulo
 dev.off() # Cierra la grafica
 #vis_dat(data_table_missing) # Opcion 2
-vis_miss(data_table_missing ,sort_miss = TRUE, cluster = TRUE) # Opcion 3
+#vis_miss(data_table_missing ,sort_miss = TRUE, cluster = TRUE) # Opcion 3
 
 
 #ii. Tabla porcentaje de Missing values
@@ -89,11 +93,17 @@ db_miss<- db_miss %>% mutate(p_missing= n_missing/Nobs) %>% arrange(-n_missing)
 db_miss
 
 ## Visualizar las 5 variables con mas missings
-ggplot(head(db_miss, 5), aes(x = reorder(skim_variable, +p_missing) , y =  p_missing)) +
-  geom_bar(stat = "identity", fill = "blue", color = "black") +
+setwd(paste0(wd,"/Graficas"))
+png("graf_missing_var_prin.png") # Formato grafica
+m2 <- ggplot(head(db_miss, 5), aes(x = reorder(skim_variable, +p_missing) , y =  p_missing)) +
+  geom_bar(stat = "identity", fill = "grey", color = "black") +
   coord_flip() +
-  labs(title = "N Missing Per Variable", x = "Var Name", y = "Missings") +
-  theme(axis.text = element_text(size = 5))  # Set size for axis labels
+  labs(title = "Missings de variables", x = "Variables", y = "Missings") +
+  theme(axis.text = element_text(size = 8)) + 
+  theme(
+    plot.title = element_text(size = 10, face = "bold")  # Cambia el tamaño y estilo del título
+  )
+dev.off() # Cierra la grafica
 
 #Eliminar variable otros ingresos - muchos missings
 data_webs <- data_webs %>%
@@ -126,10 +136,6 @@ data_webs <- data_webs  %>%
   mutate(Nivel_educ = ifelse(is.na(Nivel_educ) == TRUE, mode_edu , Nivel_educ))
 summary(data_webs$Nivel_educ)
 
-#Crear la variable dummy jefe de hogar
-data_webs$dummy_jefe <- ifelse(data_webs$Posicion_hogar == 1, 1, 0)
-data_webs <- data_webs %>% 
-  mutate(Experiencia_años = Experiencia/12)
 
 # 5. Analisis de valores atipicos -----------------------------------------------
 
@@ -154,9 +160,7 @@ data_webs <- data_webs %>%
                         cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
                         cex.main = 0.8)                        # Tamaño de la fuente para el título
   box_ingr_h
-  setwd(paste0(wd,"/Graficas"))
-  ggsave("box_ingr_h", plot = box_ingr_h)
-  
+
   ## Edad
   summary(data_webs$Edad) #Mirar minimos y maximos de edad
   box_edad <- boxplot(data_webs$Edad,
@@ -176,9 +180,7 @@ data_webs <- data_webs %>%
                       cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
                       cex.main = 0.8)                        # Tamaño de la fuente para el título
   box_edad
-  setwd(paste0(wd,"/Graficas"))
-  ggsave("box_edad", plot = box_edad)
-  
+
   ## Experiencia
   summary(data_webs$Experiencia_años) #Mirar minimos y maximos de edad
   box_exp <- boxplot(data_webs$Experiencia_años,
@@ -197,9 +199,7 @@ data_webs <- data_webs %>%
                       cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
                       cex.main = 0.8)                        # Tamaño de la fuente para el título
   box_exp
-  setwd(paste0(wd,"/Graficas"))
-  ggsave("box_exp.png", plot = box_edad)
-  
+
 
   ## Horas trabajadas
   summary(data_webs$Horas_trabajadas) #Mirar minimos y maximos de edad
@@ -219,8 +219,7 @@ data_webs <- data_webs %>%
                         cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
                         cex.main = 0.8)                        # Tamaño de la fuente para el título
   box_horas
-  setwd(paste0(wd,"/Graficas"))
-  ggsave("box_exp.png", plot = box_horas)
+
   
   #Unir las gráficas en sola
   (box_ingr_h | box_edad)/(box_exp | box_horas)
