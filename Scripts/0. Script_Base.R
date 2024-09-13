@@ -11,19 +11,23 @@ rm(list = ls())   # Borra la memoria
 
 # Se cargan los paquetes de inter?s
 library(pacman)
-p_load(tidyverse , # tidy-data
-       rio, # read/write data from almost any file format
-       dtplyr,
-       rvest, 
-       readr,
-       rio, # import/export data
-       skimr, # summary data
-       visdat, ## visualizing missing data
-       corrplot, ## Correlation Plots
-       stargazer,
-       ggpubr,
+p_load(rio,              # Importaci?n y exportaci?n sencilla de datos
+       tidyverse,        # Colecci?n de paquetes para datos ordenados y gr?ficos (incluye ggplot2).
+       skimr,            # Resumen compacto y descriptivo de datos
+       visdat,           # Visualizaci?n de datos faltantes
+       corrplot,         # Gr?ficos de matrices de correlaci?n
+       stargazer,        # Generaci?n de tablas en formatos de salida como LaTeX, HTML o texto
+       rvest,            # Herramientas para web scraping
+       readxl,           # Importar archivos Excel
+       writexl,          # Exportar archivos Excel
+       boot,             # Aplicaci?n de m?todos de remuestreo (bootstrapping)
+       patchwork,        # Combinaci?n y organizaci?n de gr?ficos
+       gridExtra,        # Disposici?n de gr?ficos en cuadr?cula
+       ggplot2,          # Creaci?n de gr?ficos mediante gram?tica de gr?ficos
+       caret,            # Evaluaci?n y entrenamiento de modelos predictivos
+       visdat,           # Visualizar missings
        patchwork,        # Diseño de graficos
-       naniar) ## tables/output to TEX.
+       data.table)       # Manipulaci?n eficiente de grandes conjuntos de datos
 
 getwd() #Mirar directorio
 
@@ -31,10 +35,10 @@ getwd() #Mirar directorio
 
 ifelse(grepl("HP", getwd()),
        wd <- "C:/Users/HP/OneDrive - Universidad Nacional de Colombia/Documentos/Diego/PEG/2024-2/Machine learning/Problem-Set-1_Machine-Learning_2024",
-       ifelse(grepl("JULIETH", getwd()),
+       ifelse(grepl("JULIETH", getwd()), #Juliet1
               wd <- "C:/Users/JULIETH/Documents/GitHub/Problem-Set-1_Machine-Learning_2024",
               ifelse(grepl("Usuario", getwd()), #Juliet2
-                     wd <-"C:/Users/Usuario/OneDrive - Universidad de los andes/Documentos/GitHub/Problem-Set-1_Machine-Learning_2024,
+                     wd <-"C:/Users/Usuario/OneDrive - Universidad de los andes/Documentos/GitHub/Problem-Set-1_Machine-Learning_2024",
                      ifelse(grepl("C:/Users/User", getwd()),
                             wd <- "C:/Users/User/OneDrive - Universidad de los Andes/Big Data y Machine Learning/Problem_set_1/Problem_set_1",
                             ifelse(grepl("/Users/aleja/", getwd()),

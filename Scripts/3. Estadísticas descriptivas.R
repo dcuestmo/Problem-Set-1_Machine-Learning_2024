@@ -19,6 +19,8 @@ subset_data <- data_webs[, c("log_ing_h_imp2", "Edad",
                              "Experiencia_años", "Independiente")]
 
 #3. Calcular la matriz de correlación para esas variables
+setwd(paste0(wd,"/Graficas"))
+png("graf_corr") # Formato grafica
 cor_matrix <- cor(subset_data, use="complete.obs")
 print(cor_matrix)
 corrplot(cor_matrix,
@@ -28,6 +30,7 @@ corrplot(cor_matrix,
          addCoef.col = "black",      # Color de los coeficientes numéricos
          number.cex = 0.7)           # Tamaño de los números que muestran los coeficientes
 cor_matrix
+dev.off() # Cierra la grafica
 
 
 #4. Tabla de variables principales
@@ -107,10 +110,10 @@ dev.off() # Cierra la grafica
 data_webs$Sexo <- factor(data_webs$Sexo, levels = c(1, 0), labels = c("Hombre", "Mujer"))
 
 ## Graficas por sexo - entrepuestas
-box_plot <- ggplot(data = data_webs, aes(x = factor(Sexo), y = log_ing_h_imp2, fill = as.factor(Sexo))) + 
+box_plot <- ggplot(data = data_webs, aes(x = factor(Sexo), y = Ingreso_hora_imp2, fill = as.factor(Sexo))) + 
   geom_boxplot(alpha = 0.5) +
   scale_fill_manual(values = c("Mujer" = "red", "Hombre" = "blue"), labels = c("Mujer", "Hombre")) +
-  labs(title = "Distribución del Ingreso por Hora según Sexo", x = "Sexo", y = "Ingreso por hora", fill = "Sexo") +
+  labs(title = "Distribución del Ingreso por Hora según Sexo", x = "Sexo", y = "Ingreso por hora (Miles de pesos)", fill = "Sexo") +
   scale_x_discrete(labels = c("0" = "Mujer", "1" = "Hombre")) +
   theme_minimal() +
   theme(
@@ -122,15 +125,15 @@ dev.off() # Cierra la grafica
 
 
 #Graficas de distribucion del ingreso 
-den_plot <- ggplot(data_webs, aes(log_ing_h_imp2, fill=Sexo)) +
+den_plot <- ggplot(data_webs, aes(Ingreso_hora_imp2, fill=Sexo)) +
   geom_density(alpha = 0.5) +  # Densidad superpuesta con transparencia
   theme_minimal() +  # Tema minimalista
   labs(title = "Gráfico de densidad de ingresos por hora por sexo",
        x = "Ingreso por hora",
        y = "Densidad",
        fill = "Sexo") +
-  geom_vline(aes(xintercept = mean(log_ing_h_imp2[Sexo == "Hombre"])), color = "blue", linetype = "dashed") +  # Línea punteada para la media de hombres
-  geom_vline(aes(xintercept = mean(log_ing_h_imp2[Sexo == "Mujer"])), color = "red", linetype = "dashed") +   # Línea punteada para la media de mujeres
+  geom_vline(aes(xintercept = mean(Ingreso_hora_imp2[Sexo == "Hombre"])), color = "blue", linetype = "dashed") +  # Línea punteada para la media de hombres
+  geom_vline(aes(xintercept = mean(Ingreso_hora_imp2[Sexo == "Mujer"])), color = "red", linetype = "dashed") +   # Línea punteada para la media de mujeres
   theme(
     plot.title = element_text(size = 10)  # Cambia el tamaño y estilo del título
   )

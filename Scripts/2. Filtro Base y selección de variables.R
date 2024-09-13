@@ -71,9 +71,11 @@ data_table_missing <- data_webs %>%
 setwd(paste0(wd,"/Graficas"))
 png("grafica_missing.png") # Formato grafica
 m1 <-vis_miss(data_table_missing) +
-  theme(axis.text.y = element_text(angle = 90, hjust = 1), # Coloca las etiquetas del eje Y en vertical
+  theme(axis.text.y = element_text(angle = 90), # Coloca las etiquetas del eje Y en vertical
+        axis.text.x = element_text(angle = 90),
         plot.title = element_text(hjust = 0.5), # Centra el título
         plot.subtitle = element_text(hjust = 0.5)) # Centra el subtítulo
+m1
 dev.off() # Cierra la grafica
 #vis_dat(data_table_missing) # Opcion 2
 #vis_miss(data_table_missing ,sort_miss = TRUE, cluster = TRUE) # Opcion 3
@@ -92,11 +94,13 @@ png("graf_missing_var_prin.png") # Formato grafica
 m2 <- ggplot(head(db_miss, 5), aes(x = reorder(skim_variable, +p_missing) , y =  p_missing)) +
   geom_bar(stat = "identity", fill = "grey", color = "black") +
   coord_flip() +
+  theme_minimal() +
   labs(title = "Missings de variables", x = "Variables", y = "Missings") +
   theme(axis.text = element_text(size = 8)) + 
   theme(
     plot.title = element_text(size = 10, face = "bold")  # Cambia el tamaño y estilo del título
   )
+m2
 dev.off() # Cierra la grafica
 
 #Eliminar variable otros ingresos - muchos missings
@@ -138,86 +142,64 @@ summary(data_webs$Nivel_educ)
 
   ## Salarios por hora imputado - en logaritmo
   summary(data_webs$Ingreso_hora_imp) #Mirar minimos y maximos de edad
-  b1 <- boxplot(data_webs$Ingreso_hora_imp,
-                        main = "",      # Título
-                        ylab = "ingreso por hora",                  # Etiqueta eje Y
-                        col = "gray",                          # Color de la caja gris
-                        border = "black",                      # Color del borde negro
-                        notch = TRUE,                          # Agregar muescas para intervalos de confianza
-                        boxwex = 0.5,                          # Ancho de la caja
-                        whisklty = 1,                          # Líneas sólidas en los bigotes
-                        whiskcol = "darkgray",                 # Color de los bigotes
-                        staplewex = 0.6,                       # Ancho de las grapas
-                        outpch = 19,                           # Tipo de símbolo para outliers
-                        outcol = "red",                        # Color de los outliers
-                        cex.axis = 0.8,                        # Tamaño de la fuente para los números del eje
-                        cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
-                        cex.main = 0.8)                        # Tamaño de la fuente para el título
-  b1
+
+    #Ingreso laboral
+    b1 <- ggplot(data_webs, aes(x = "", y = Ingreso_hora_imp)) +
+      geom_boxplot() +
+      theme_gray() +
+      labs(title = "Ingreso laboral por hora", x = "", y = "Miles de pesos") +
+      theme(axis.text = element_text(size = 8)) + 
+      theme(
+        plot.title = element_text(size = 10, face = "bold")  # Cambia el tamaño y estilo del título
+      )
+    b1
+
   
-  ## Edad
-  summary(data_webs$Edad) #Mirar minimos y maximos de edad
-  b2 <- boxplot(data_webs$Edad,
-                      main = "",      # Título
-                      ylab = "Edad (años)",                  # Etiqueta eje Y
-                      col = "gray",                          # Color de la caja gris
-                      border = "black",                      # Color del borde negro
-                      notch = TRUE,                          # Agregar muescas para intervalos de confianza
-                      boxwex = 0.5,                          # Ancho de la caja
-                      whisklty = 1,                          # Líneas sólidas en los bigotes
-                      whiskcol = "darkgray",                 # Color de los bigotes
-                      staplewex = 0.6,                       # Ancho de las grapas
-                      outpch = 19,                           # Tipo de símbolo para outliers
-                      outcol = "red",                        # Color de los outliers
-                      ylim = c(0, 100),                      # Escala del eje Y de 0 a 100
-                      cex.axis = 0.8,                        # Tamaño de la fuente para los números del eje
-                      cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
-                      cex.main = 0.8)                        # Tamaño de la fuente para el título
-  b2
+    #Ingreso laboral
+    b2 <- ggplot(data_webs, aes(x = "", y = Edad)) +
+      geom_boxplot() +
+      theme_gray() +
+      labs(title = "Edad", x = "", y = "años") +
+      theme(axis.text = element_text(size = 8)) + 
+      theme(
+        plot.title = element_text(size = 10, face = "bold")  # Cambia el tamaño y estilo del título
+      )
+    b2
+    
 
   ## Experiencia
-  summary(data_webs$Experiencia_años) #Mirar minimos y maximos de edad
-  b3 <- boxplot(data_webs$Experiencia_años,
-                      main = "",      # Título
-                      ylab = "Años experiencia",                  # Etiqueta eje Y
-                      col = "gray",                          # Color de la caja gris
-                      border = "black",                      # Color del borde negro
-                      notch = TRUE,                          # Agregar muescas para intervalos de confianza
-                      boxwex = 0.5,                          # Ancho de la caja
-                      whisklty = 1,                          # Líneas sólidas en los bigotes
-                      whiskcol = "darkgray",                 # Color de los bigotes
-                      staplewex = 0.6,                       # Ancho de las grapas
-                      outpch = 19,                           # Tipo de símbolo para outliers
-                      outcol = "red",                        # Color de los outliers
-                      cex.axis = 0.8,                        # Tamaño de la fuente para los números del eje
-                      cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
-                      cex.main = 0.8)                        # Tamaño de la fuente para el título
-  b3
-
+    b3 <- ggplot(data_webs, aes(x = "", y = Experiencia_años)) +
+      geom_boxplot() +
+      theme_gray() +
+      labs(title = "Experiencia", x = "", y = "años") +
+      theme(axis.text = element_text(size = 8)) + 
+      theme(
+        plot.title = element_text(size = 10, face = "bold")  # Cambia el tamaño y estilo del título
+      )
+    b3
+    
 
   ## Horas trabajadas
   summary(data_webs$Horas_trabajadas) #Mirar minimos y maximos de edad
-  b4 <- boxplot(data_webs$Horas_trabajadas,
-                        main = "",      # Título
-                        ylab = "Horas trabajadas",                  # Etiqueta eje Y
-                        col = "gray",                          # Color de la caja gris
-                        border = "black",                      # Color del borde negro
-                        notch = TRUE,                          # Agregar muescas para intervalos de confianza
-                        boxwex = 0.5,                          # Ancho de la caja
-                        whisklty = 1,                          # Líneas sólidas en los bigotes
-                        whiskcol = "darkgray",                 # Color de los bigotes
-                        staplewex = 0.6,                       # Ancho de las grapas
-                        outpch = 19,                           # Tipo de símbolo para outliers
-                        outcol = "red",                        # Color de los outliers
-                        cex.axis = 0.8,                        # Tamaño de la fuente para los números del eje
-                        cex.lab = 0.8,                         # Tamaño de la fuente para etiquetas
-                        cex.main = 0.8)                        # Tamaño de la fuente para el título
-  b4
-
+    b4 <- ggplot(data_webs, aes(x = "", y = Horas_trabajadas)) +
+      geom_boxplot() +
+      theme_gray() +
+      labs(title = "Horas trabajadas", x = "", y = "Horas") +
+      theme(axis.text = element_text(size = 8)) + 
+      theme(
+        plot.title = element_text(size = 10, face = "bold")  # Cambia el tamaño y estilo del título
+      )
+    b4
+    
   
   # Combinar los gráficos en una cuadrícula
-  #combined_plot <- (b1 | b2) / (b3 | b4)
-  
+    setwd(paste0(wd,"/Graficas"))
+    png("graf_cajas") # Formato grafica
+    box <- (b1+b2)/(b3+b4)
+    box
+    dev.off() # Cierra la grafica
+    
+
   #ii. Tramiento valores atipicos
   
   #. Ingreso por hora
@@ -230,6 +212,7 @@ summary(data_webs$Nivel_educ)
   
   #. Experiencia
   
+  #.Horas
   
   
   # 6. Creacion variables nuevas -----------------------------------------------
