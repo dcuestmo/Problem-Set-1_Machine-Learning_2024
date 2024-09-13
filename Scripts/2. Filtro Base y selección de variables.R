@@ -1,6 +1,5 @@
 # Author: Juliet Molano
 
-
 #------------------------------------------------------------------------------#
 #---------Script 2. Filtro y seleccion de variables----------------------------#
 #------------------------------------------------------------------------------#
@@ -29,12 +28,11 @@ nrow(data_webs) #16542 observaciones que cumplen con estas caracteristicas
 data_webs <- data_webs %>%
   select(directorio, secuencia_p, orden,  # variables de referenciación
          age, sex, oficio, estrato1, p6050, # variables caracteristicas
-         regSalud, cotPension, # Seguridad social
          relab, cuentaPropia, totalHoursWorked, sizeFirm, # caracteristicas empleo
-         ingtot, ingtotob, y_salary_m, y_total_m, y_otros_m,  #ingresos
+          y_otros_m, y_total_m, y_total_m_ha,  #ingresos
          fex_c, # factor de expansión
-         hoursWorkUsual, formal, informal, y_ingLab_m_ha, y_total_m_ha,
-         Experiencia=p6426,ingtot, ingtotes,maxEducLevel #Adicionales
+         hoursWorkUsual, formal, informal,
+         Experiencia=p6426,maxEducLevel #Adicionales
   )%>%
   rename(
     Direccion = directorio,
@@ -45,14 +43,11 @@ data_webs <- data_webs %>%
     Profesion = oficio,
     Estrato = estrato1,
     Posicion_hogar = p6050,
-    Regimen_salud = regSalud,
-    Cotiza_pension = cotPension,
     Tipo_ocupacion = relab,
     Independiente = cuentaPropia,
     Horas_trabajadas = totalHoursWorked,
     Horas_trabajadas_sem =hoursWorkUsual,
     Tamaño_empresa = sizeFirm,
-    Salario_mensual = y_salary_m,
     Ingreso_total = y_total_m,
     Ingreso_hora = y_total_m_ha,
     Otros_ingresos = y_otros_m,
