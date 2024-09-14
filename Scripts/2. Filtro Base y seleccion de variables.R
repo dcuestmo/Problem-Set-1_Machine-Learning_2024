@@ -309,11 +309,12 @@ summary(data_webs$Nivel_educ)
   data_webs$log_ing_h_win=log(data_webs$Ingreso_hora_imp_win) #sin valores atipicos
   data_webs <- data_webs %>% mutate (oficio_factor= as.factor(Profesion))
   data_webs <- data_webs %>% mutate (edu_factor= as.factor(Nivel_educ))
+  data_webs <- data_webs %>% mutate (estrato_factor= as.factor(Estrato))
   data_webs$Mujer <- ifelse(data_webs$Sexo == 0, 1, 0)
 
   data_webs <- data_webs %>%
     mutate( #logaritmo del salario por hora imputado
-      Edad2 = Edad^2, #Edad al cuadrado 
+      Edad2 = Edad_win^2, #Edad al cuadrado 
       Experiencia_anios = Experiencia/12)
   
   #Descargar base de datos final

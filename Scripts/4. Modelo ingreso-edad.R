@@ -8,9 +8,8 @@ setwd(paste0(wd,"/Base_Datos"))
 data_webs <- import(file = "base_final.rds")
 
 # 1. Grafica de correlacion entre ingreso y edad ------------------------------
-summary(data_webs$Ingreso_hora_imp) #imputado con valores atipicos
-summary(data_webs$Ingreso_hora_imp2) #imputado SIN valores atipicos
-scatter_plot <- ggplot(data = data_webs, aes(x = Edad, y = log_ing_h_imp2)) +
+summary(data_webs$log_ing_h_win) #imputado con valores atipicos
+scatter_plot <- ggplot(data = data_webs, aes(x = Edad_win, y = log_ing_h_win)) +
   geom_point(color = "grey") +  # Puntos en azul
   labs(title = "", 
        x = "Edad", 
@@ -23,12 +22,12 @@ dev.off() # Cierra la grafica
  #2. Definir los posibles predictores de la base de datos---------------------- 
 
  #i. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (sin controles)
-  model_Age_wage <- lm(log_ing_h_imp2 ~ Edad + Edad2, data = data_webs) #Realizamos la regresión
+  model_Age_wage <- lm(log_ing_h_win ~ Edad_win + Edad2, data = data_webs) #Realizamos la regresión
   summary(model_Age_wage)
   stargazer(model_Age_wage, type = "text") # Modelo simple
   
   #ii. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (con controles)
-  model_Age_wage_cont1 <- lm(log_ing_h_imp2 ~ Edad + Edad2 + Sexo + Estrato + dummy_jefe + edu_factor + Tamaño_empresa + formal + Independiente + oficio_factor  + Horas_trabajadas + Experiencia_años, data = data_webs) #Realizamos la regresión
+  model_Age_wage_cont1 <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + Tamanio_empresa + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas_win + Experiencia_win, data = data_webs) #Realizamos la regresión
   summary(model_Age_wage_cont1)
   stargazer(model_Age_wage_cont1, type = "text") # Modelo con controles
 
@@ -45,12 +44,13 @@ dev.off() # Cierra la grafica
   
   # Leer el contenido del archivo
   regression_table <- readLines("modelos_edad_ingresos.tex")
+  regression_table <- gsub("Edad_win", "Edad", regression_table) #Reemplazar "Observations" con "Observaciones"
   regression_table <- gsub("Observations", "Observaciones", regression_table) #Reemplazar "Observations" con "Observaciones"
   regression_table <- gsub("Adjusted R$^{2}$ ", "R$^{2}$ ajustado", regression_table)
   writeLines(regression_table, "modelos_edad_ingresos.tex") #Escribir el contenido modificado de nuevo al archivo
   
   
-  #3. Analisis de variables influyentes ----------------------------------------
+  #3. Analisis de observaciones influyentes ------------------------------------
   
   ## leverage 
   data_webs <- data_webs %>% 
@@ -103,8 +103,8 @@ dev.off() # Cierra la grafica
   
   #---- Correr nuevamente el modelo -------#
 
-  #Modelo de prueba 2
-  n_model_Age_wage_cont1 <- lm(log_ing_h_imp2 ~ Edad + Edad2 + Sexo + Estrato + dummy_jefe + edu_factor + Tamaño_empresa + formal + Independiente + oficio_factor  + Horas_trabajadas + Experiencia_años, data = data_webs2) #Realizamos la regresión
+  #Modelo de prueba sin observaciones influyentes
+  n_model_Age_wage_cont1 <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + Tamanio_empresa + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas_win + Experiencia_win, data = data_webs2) #Realizamos la regresión
   summary(n_model_Age_wage_cont1)
   stargazer(n_model_Age_wage_cont1, type = "text") # Modelo con controles
   
@@ -113,22 +113,30 @@ dev.off() # Cierra la grafica
     mutate(residuals2 = residuals(n_model_Age_wage_cont1))  
   length(residuals(n_model_Age_wage_cont1))
   
-  #4. Analisis de valores atipicos del modelo-----------------------------------
-  
-  
-#Grafica residuos del modelo
+  #Grafica residuos del modelo
   residuos <- ggplot(data = data_webs2, 
-         mapping = aes(x=residuals2)) +
+                     mapping = aes(x=residuals2)) +
     theme_bw() + 
     geom_density()
   png("residuos_sin_var_influy") # Formato grafica
   residuos
   dev.off() # Cierra la grafica
   
+  #4. Analisis de valores atipicos del modelo-----------------------------------
+  
+  data_webs <-data_webs %>% mutate(m1_std_residuals_c = studres(model_Age_wage_cont1))
+  
+  ggplot(data_webs , aes(y = m1_std_residuals_c, x = id , color= Edad_win, shape= as.factor(Mujer) )) +
+    geom_point() + # add points
+    theme_bw() + #black and white theme
+    labs(x = "Observaciones",  
+         y = "Residuos",
+         title = "") # labels
+  
   ##Residuo estudentizado
-  data_webs2 <-data_webs2 %>% mutate(m1_std_residuals2 = studres(n_model_Age_wage_cont1))
+  data_webs <-data_webs %>% mutate(m1_std_residuals_c = studres(model_Age_wage_cont1))
 
-  ggplot(data_webs2 , aes(y = m1_std_residuals2 , x = id , color= Edad, shape= as.factor(Sexo) )) +
+  ggplot(data_webs , aes(y = m1_std_residuals_c , x = id , color= Edad_win, shape= as.factor(Mujer) )) +
     geom_point() + # add points
     theme_bw() + #black and white theme
     labs(x = "Observaciones",  
@@ -136,19 +144,58 @@ dev.off() # Cierra la grafica
          title = "") # labels
   
   #Eliminacion de valores atipicos
-  data_webs2 <- data_webs2 %>% filter(m1_std_residuals2<2 & m1_std_residuals2>-2 )
+  data_webs3 <- data_webs %>% filter(m1_std_residuals_c<2 & m1_std_residuals_c>-2 )
   
   # Correr nuevo the model
-  n2_model_Age_wage_cont1 <- lm(log_ing_h_imp2 ~ Edad + Edad2 + Sexo + Estrato + dummy_jefe + edu_factor + Tamaño_empresa + formal + Independiente + oficio_factor  + Horas_trabajadas + Experiencia_años, data = data_webs2) #Realizamos la regresión
-  summary(n2_model_Age_wage_cont1)
-  stargazer(n2_model_Age_wage_cont1, type = "text") # Modelo con controles
+  model_Age_wage_cont1_vt <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + Tamanio_empresa + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas_win + Experiencia_win, data = data_webs3) #Realizamos la regresión
+  summary(model_Age_wage_cont1_vt)
+  stargazer(model_Age_wage_cont1_vt, type = "text") # Modelo con controles
   
 
+  #Tabla de modelo con controles
+  stargazer(model_Age_wage_cont1,n_model_Age_wage_cont1,model_Age_wage_cont1_vt,
+            keep = c("Edad_win", "Edad2"),
+            dep.var.caption  = "",
+            title = "",
+            align = TRUE,
+            header = FALSE,
+            dep.var.labels.include = FALSE,
+            column.labels   = c("Log(ingreso por hora)", "Log(ingreso por hora)",  "Log(ingreso por hora)"),
+            covariate.labels = c("Edad", "Edad al cuadrado"),
+            type="latex",
+            out = "modelos_edad_ingresos_controles.tex")  
+  
+  # Leer el contenido del archivo
+  regression_table <- readLines("modelos_edad_ingresos_controles.tex")
+  regression_table <- gsub("Observations", "Observaciones", regression_table) #Reemplazar "Observations" con "Observaciones"
+  regression_table <- gsub("Adjusted R$^{2}$ ", "R$^{2}$ ajustado", regression_table)
+  writeLines(regression_table, "modelos_edad_ingresos_controles.tex") #Escribir el contenido modificado de nuevo al archivo
+  
+  #Tabla de modelos finales
+  stargazer(model_Age_wage, model_Age_wage_cont1_vt,
+            keep = c("Edad_win", "Edad2"),
+            dep.var.caption  = "",
+            title = "",
+            align = TRUE,
+            header = FALSE,
+            dep.var.labels.include = FALSE,
+            column.labels   = c("Log(ingreso por hora)", "Log(ingreso por hora)"),
+            covariate.labels = c("Edad", "Edad al cuadrado"),
+            type="latex",
+            out = "modelos_edad_ingresos_final.tex")  
+  
+  # Leer el contenido del archivo
+  regression_table <- readLines("modelos_edad_ingresos_final.tex")
+  regression_table <- gsub("Observations", "Observaciones", regression_table) #Reemplazar "Observations" con "Observaciones"
+  regression_table <- gsub("Adjusted R$^{2}$ ", "R$^{2}$ ajustado", regression_table)
+  writeLines(regression_table, "modelos_edad_ingresos_final.tex") #Escribir el contenido modificado de nuevo al archivo
+  
+  
   #5. Valor maximo -----------------------------------------------------------
   
   #i. MODELO SIN CONTROLES
   
-  ## FORMA 1##
+  #-- Forma 1 --#
   
   #Obtener la edad máxima en la que el incremento en el salario empieza a disminuir(SC)
   matrix_coef <- summary(model_Age_wage)$coefficients
@@ -161,7 +208,8 @@ dev.off() # Cierra la grafica
   edad_peak<-(-coeficiente_edad/(2*coeficiente_edad2))
   edad_peak
   
-  ## FORMA 2##
+  #-- Forma 2 --#
+  
   Peak_age_fun <- function(age_1, age_2) {
     Edad_P<- -(age_1/(2*age_2))
     return (Edad_P)
@@ -170,17 +218,16 @@ dev.off() # Cierra la grafica
   Peak_age_mod_simple <- Peak_age_fun(age_1 = model_Age_wage$coefficients[2],age_2 = model_Age_wage$coefficients[3])
   Peak_age_mod_simple
   
-  #2. MODELO CON CONTROLES
+  #ii. MODELO CON CONTROLES
   
   #  FORMA 1
   
   #Obtener la edad máxima en la que el incremento en el salario empieza a disminuir(C)
-  matrix_coef <- summary(n2_model_Age_wage_cont1)$coefficients
+  matrix_coef <- summary(model_Age_wage_cont1_vt)$coefficients
   matrix_coef
   coeficiente_edad_c<-my_estimates <- matrix_coef[2, 1] 
   coeficiente_edad_c2<-my_estimates <- matrix_coef[3, 1] 
   coeficiente_edad_c2
-  
   #Aplico la fórmula para obtener el "peak" de la edad 
   edad_peak_C<-(-coeficiente_edad_c/(2*coeficiente_edad_c2))
   edad_peak_C
@@ -191,33 +238,63 @@ dev.off() # Cierra la grafica
     return (Edad_P)
   }
   
-  Peak_age_mod_controles <- Peak_age_fun(age_1 = n2_model_Age_wage_cont1$coefficients[2],age_2 = n2_model_Age_wage_cont1$coefficients[3])
+  Peak_age_mod_controles <- Peak_age_fun(age_1 = model_Age_wage_cont1_vt$coefficients[2],age_2 = model_Age_wage_cont1_vt$coefficients[3])
   Peak_age_mod_controles
   
   
-#-------------------------------------BOOTSTRAP ----------------------------#
-
-#---------- Mirar prediccion -------------#
+  # 6. Calculo de los errores de los modelos ----------------------------------
   
   # Realiza predicciones con el modelo
-  data2$predicted <- predict(model_Age_wage, newdata = data2)
-  data2$predicted_cont <- predict(n2_model_Age_wage_cont3, newdata = data2)
+  data_webs$predicted <- predict(model_Age_wage, newdata = data_webs) #modelo sencillo
+  data_webs3$predicted_cont <- predict(model_Age_wage_cont1_vt, newdata = data_webs3)
   
-  #Modelo predicted vs salario 
-  ggplot(data2, aes(x = predicted_cont, y = log_ing_h_imp))+
+  #Modelo predicho vs salario- sin controles
+  graf1 <- ggplot(data_webs, aes(x = predicted, y = log_ing_h_win))+
     geom_point(color = "grey")+
-    geom_abline(color ="darkblue")+
+    geom_abline(color ="red")+
     xlab("Predicción")+
-    ylab("Log(Salario)")+
+    ylab("Log(ingresos por hora)")+
     theme_minimal()
+  setwd(paste0(wd,"/Graficas"))
+  png("model_simple.png") # Formato grafica
+  graf1
+  dev.off() # Cierra la grafica
   
+  
+  #Modelo predicho vs salario- con controles
+  graf2 <- ggplot(data_webs3, aes(x = predicted_cont, y = log_ing_h_win))+
+    geom_point(color = "grey")+
+    geom_abline(color ="red")+
+    xlab("Predicción")+
+    ylab("Log(ingresos por hora)")+
+    theme_minimal()
+  setwd(paste0(wd,"/Graficas"))
+  png("model_completo.png") # Formato grafica
+  graf2
+  dev.off() # Cierra la grafica
+  
+  # Calcular error Modelo simple
+  err <- data_webs$log_ing_h_win - data_webs$predicted
+  err2 <- err^2
+  (rmse <-sqrt(mean(err2))) # 0.79
+  
+  # Calcular error Modelo Completo
+  err_cont <- data_webs3$predicted_cont - data_webs3$log_ing_h_win
+  err2_cont <- err_cont^2
+  (rmse_cont <-sqrt(mean(err2_cont, na.rm = TRUE))) # 0.40
+  
+  
+  Peak_age_mod_simple <- Peak_age_fun(age_1 = model_Age_wage$coefficients[2],age_2 = model_Age_wage$coefficients[3]) #Modelo 1 (46 años)
+  Peak_age_mod_cont <- Peak_age_fun(age_1 = model_Age_wage_cont1_vt$coefficients[2],age_2 = model_Age_wage_cont1_vt$coefficients[3]) #Modelo 2 (60 años)
+  
+  # 6. BOOTSTRAP --------------------------------------------------------------
   
   #---------- MODELO simple------------#
   
   
   #Intervalos de confianza con bootstrap
-  Age_Wage_Profile_fn<-function(data2,index){
-    f <- lm(log_ing_h_imp ~ Edad + Edad2, data = data2, subset= index)
+  Age_Wage_Profile_fn<-function(data_webs,index){
+    f <- lm(log_ing_h_win ~ Edad_win + Edad2, data = data_webs, subset= index)
     b1 <- f$coefficients[2]
     b2 <- f$coefficients[3]
     max_edad <- -(b1)/(2*b2)
@@ -225,28 +302,38 @@ dev.off() # Cierra la grafica
   }
   
   #Verifiquemos que la función... funciona!
-  Age_Wage_Profile_fn(data2,1:nrow(data2))
+  Age_Wage_Profile_fn(data_webs,1:nrow(data_webs))
   
   #Se utiliza la funcion boot para estimar la regresion con bootstrap
   set.seed(2365)
-  boot_results_mod_simple <- boot(data2, Age_Wage_Profile_fn, R = 1000)
+  boot_results_mod_simple <- boot(data_webs, Age_Wage_Profile_fn, R = 1000)
   Dist_Peak_age_mod_simple <- as.data.frame(boot_results_mod_simple$t)
   hist(Dist_Peak_age_mod_simple$V1) #distribucion del valor maximo de la edad con bootstrap
   
   ## Histograma - Modelo Simple
   Hist_mod_simp <- ggplot(Dist_Peak_age_mod_simple, aes(x = V1)) +
-    geom_histogram(bins = 50, color = "white", fill = "#528B8B") +
+    geom_histogram(bins = 50, color = "white", fill = "grey") +
     labs(x ='Edad', y='Frecuencia', title = "Panel A: Modelo simple")+
-    geom_vline(aes(xintercept = Peak_age_mod_simple), color = "mistyrose", linewidth = 1)+
+    geom_vline(aes(xintercept = Peak_age_mod_simple), color = "red", linewidth = 1)+
     theme_minimal()
   Hist_mod_simp
   
+  #Grafica
+  Age_wage_P_plot <- ggplot(data_webs, aes(x = Edad_win, y = log_ing_h_win)) +
+    geom_point(aes(color = "Real"), alpha = 0.5) +  # Puntos para valores reales
+    geom_line(aes(y = predicted, color = "Predicho"), linewidth = 1) +  # Línea para valores predichos
+    scale_color_manual(values = c("Real" = "grey", "Predicho" = "red"),name="") +  # Colores de puntos y líneas
+    labs(title = "Panel A: Modelo simple",
+         x = "Edad",
+         y = "Log(Ingreso por hora)") +
+    theme_minimal()
+  print(Age_wage_P_plot)
   
   #---------- MODELO con controles------------#
   
   #Intervalos de confianza con bootstrap
-  Age_Wage_Profile_mod_cont<-function(data2,index){
-    f <- lm(log_ing_h_imp ~ Edad + Edad2 + Sexo + Tamaño_empresa + formal + Independiente + oficio_factor + edu_factor + Horas_trabajadas + Experiencia_años, data = data2, subset = index)
+  Age_Wage_Profile_mod_cont<-function(data_webs3,index){
+    f <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + Tamanio_empresa + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas + Experiencia_win, data = data_webs3, subset = index)
     b1 <- f$coefficients[2]
     b2 <- f$coefficients[3]
     max_edad <- -(b1)/(2*b2)
@@ -254,19 +341,25 @@ dev.off() # Cierra la grafica
   }
   
   #Verifiquemos que la función... funciona!
-  Age_Wage_Profile_mod_cont(data2,1:nrow(data2))
+  Age_Wage_Profile_mod_cont(data_webs3,1:nrow(data_webs3))
   
   #Se utiliza la funcion boot para estimar la regresion con bootstrap
   set.seed(2365)
-  boot_results_mod_cont <- boot(data2, Age_Wage_Profile_mod_cont, R = 1000)
+  boot_results_mod_cont <- boot(data_webs3, Age_Wage_Profile_mod_cont, R = 1000)
   Dist_Peak_age_mod_cont <- as.data.frame(boot_results_mod_cont$t)
   hist(Dist_Peak_age_mod_cont$V1) #distribucion del valor maximo de la edad con bootstrap
   
   ## Histograma - Modelo Simple
   Hist_mod_cont <- ggplot(Dist_Peak_age_mod_cont, aes(x = V1)) +
-    geom_histogram(bins = 50, color = "white", fill = "steelblue") +
-    labs(x ='Edad', y='Frecuencia', title = "Panel B: Modelo con controles")+
-    geom_vline(aes(xintercept = Peak_age_mod_cont), color = "seashell3", linewidth = 1)+
+    geom_histogram(bins = 50, color = "white", fill = "grey") +
+    labs(x ='Edad', y='Frecuencia', title = "Panel B: Modelo con controles") +
+    geom_vline(aes(xintercept = Peak_age_mod_cont), color = "red", linewidth = 1) +
     theme_minimal()
   Hist_mod_cont
   
+  
+  ### Panel 1
+  Hist_mod_simp + Hist_mod_cont
+  
+  ### Panel 2
+  Age_wage_P_plot + Age_wage_P_plot_cont
