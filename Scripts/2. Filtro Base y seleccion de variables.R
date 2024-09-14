@@ -242,7 +242,7 @@ summary(data_webs$Nivel_educ)
   up <- quantile(data_webs$Experiencia, 0.99, na.rm=T)
   data_webs <- data_webs %>% mutate(Experiencia_win =  ifelse( test=( Experiencia>= up), 
                                                    yes= up,
-                                                   no= Experiencia))
+                                                   no= Experiencia_anios))
   # Horas Trabajadas
   up <- quantile(data_webs$Horas_trabajadas, 0.99, na.rm=T)
   data_webs <- data_webs %>% mutate(Horas_trabajadas_win =  ifelse( test=( Horas_trabajadas>= up), 
@@ -297,7 +297,7 @@ summary(data_webs$Nivel_educ)
   
   #Combinar graficas winsorizadas
   setwd(paste0(wd,"/Graficas"))
-  png("graf_cajas_win") # Formato grafica
+  png("graf_cajas_win.png") # Formato grafica
   box_win <- (b5+b6)/(b7+b8)
   box_win
   dev.off() # Cierra la grafica
