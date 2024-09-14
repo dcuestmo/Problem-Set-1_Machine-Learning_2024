@@ -26,7 +26,7 @@ p_load(rio,              # Importacion y exportacion sencilla de datos
        ggplot2,          # Creacion de graficos mediante gramatica de graficos
        caret,            # Evaluacion y entrenamiento de modelos predictivos
        visdat,           # Visualizar missings
-       patchwork,        # Dise�o de graficos
+       patchwork,        # Dise?o de graficos
        data.table,       # Manipulacion eficiente de grandes conjuntos de datos
        MASS,             # For post regression calculations
        dplyr)            # For post regression calculations      
@@ -37,17 +37,20 @@ getwd() #Mirar directorio
 
 ifelse(grepl("HP", getwd()), # Diego
        wd <- "C:/Users/HP/OneDrive - Universidad Nacional de Colombia/Documentos/Diego/PEG/2024-2/Machine learning/Problem-Set-1_Machine-Learning_2024",
-       ifelse(grepl("JULIETH", getwd()), #Juliet1
+       ifelse(grepl("JULIETH", getwd()), # Julieth1
               wd <- "C:/Users/JULIETH/Documents/GitHub/Problem-Set-1_Machine-Learning_2024",
-              ifelse(grepl("Usuario", getwd()), #Juliet2
-                     wd <-"C:/Users/Usuario/OneDrive - Universidad de los andes/Documentos/GitHub/Problem-Set-1_Machine-Learning_2024",
-                     ifelse(grepl("C:/Users/User", getwd()),
-                            wd <- "C:/Users/User/OneDrive - Universidad de los Andes/Big Data y Machine Learning/Problem_set_1/Problem_set_1",
-                            ifelse(grepl("/Users/aleja/", getwd()),
-                                   wd <- "Directorio",
-                                   ifelse(grepl("Steven Ramirez", getwd()),
-                                   wd <- "C:/Users/Steven Ramirez/OneDrive - Universidad de los Andes/Grupo - Econometría 1/Escritorio/Big Data/Problem-Set-1_Machine-Learning_2024",
-                                   wd <- "otro_directorio"))))))
+              ifelse(grepl("Usuario", getwd()), # Julieth2
+                     wd <- "C:/Users/Usuario/OneDrive - Universidad de los andes/Documentos/GitHub/Problem-Set-1_Machine-Learning_2024",
+                     ifelse(grepl("hncar", getwd()), 
+                            wd <- "C:/Users/hncar/Documents/GitHub/Problem-Set-1_Machine-Learning_2024",
+                            ifelse(grepl("C:/Users/User", getwd()), 
+                                   wd <- "C:/Users/User/OneDrive - Universidad de los Andes/Big Data y Machine Learning/Problem_set_1/Problem_set_1",
+                                   ifelse(grepl("/Users/aleja/", getwd()), 
+                                          wd <- "Directorio",
+                                          ifelse(grepl("Steven Ramirez", getwd()), 
+                                                 wd <- "C:/Users/Steven Ramirez/OneDrive - Universidad de los Andes/Grupo - Econometría 1/Escritorio/Big Data/Problem-Set-1_Machine-Learning_2024",
+                                                 wd <- "otro_directorio")))))))
+       
 
 # 2. Script de Web-scraping ----------------------------------------------------
 
