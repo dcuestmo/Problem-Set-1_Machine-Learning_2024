@@ -208,6 +208,7 @@ dev.off() # Cierra la grafica
   edad_peak<-(-coeficiente_edad/(2*coeficiente_edad2))
   edad_peak
   
+
   #-- Forma 2 --#
   
   Peak_age_fun <- function(age_1, age_2) {
@@ -273,6 +274,8 @@ dev.off() # Cierra la grafica
   graf2
   dev.off() # Cierra la grafica
   
+  
+  
   # Calcular error Modelo simple
   err <- data_webs$log_ing_h_win - data_webs$predicted
   err2 <- err^2
@@ -313,21 +316,34 @@ dev.off() # Cierra la grafica
   ## Histograma - Modelo Simple
   Hist_mod_simp <- ggplot(Dist_Peak_age_mod_simple, aes(x = V1)) +
     geom_histogram(bins = 50, color = "white", fill = "grey") +
-    labs(x ='Edad', y='Frecuencia', title = "Panel A: Modelo simple")+
+    labs(x ='Edad', y='Frecuencia', title = "Modelo simple")+
     geom_vline(aes(xintercept = Peak_age_mod_simple), color = "red", linewidth = 1)+
-    theme_minimal()
-  Hist_mod_simp
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 14, face = "bold"),      # Aumenta el tamaño del título
+      axis.title.x = element_text(size = 14),                   # Aumenta el tamaño del label del eje X
+      axis.title.y = element_text(size = 14)                    # Aumenta el tamaño del label del eje Y
+    )  Hist_mod_simp
   
   #Grafica
   Age_wage_P_plot <- ggplot(data_webs, aes(x = Edad_win, y = log_ing_h_win)) +
     geom_point(aes(color = "Real"), alpha = 0.5) +  # Puntos para valores reales
     geom_line(aes(y = predicted, color = "Predicho"), linewidth = 1) +  # Línea para valores predichos
     scale_color_manual(values = c("Real" = "grey", "Predicho" = "red"),name="") +  # Colores de puntos y líneas
-    labs(title = "Panel A: Modelo simple",
+    labs(title = "Modelo simple",
          x = "Edad",
          y = "Log(Ingreso por hora)") +
-    theme_minimal()
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 14, face = "bold"),      # Aumenta el tamaño del título
+      axis.title.x = element_text(size = 14),                   # Aumenta el tamaño del label del eje X
+      axis.title.y = element_text(size = 14)                    # Aumenta el tamaño del label del eje Y
+    )
   print(Age_wage_P_plot)
+  
+  quantile(Dist_Peak_age_mod_simple$V1,0.025) #percentil 2.5 (47.16848)
+  quantile(Dist_Peak_age_mod_simple$V1,0.975) #percentil 97.5 (49.35956)
+  
   
   #---------- MODELO con controles------------#
   
@@ -352,14 +368,46 @@ dev.off() # Cierra la grafica
   ## Histograma - Modelo Simple
   Hist_mod_cont <- ggplot(Dist_Peak_age_mod_cont, aes(x = V1)) +
     geom_histogram(bins = 50, color = "white", fill = "grey") +
-    labs(x ='Edad', y='Frecuencia', title = "Panel B: Modelo con controles") +
+    labs(x = 'Edad', y = 'Frecuencia', title = "Modelo con controles") +
     geom_vline(aes(xintercept = Peak_age_mod_cont), color = "red", linewidth = 1) +
-    theme_minimal()
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 14, face = "bold"),      # Aumenta el tamaño del título
+      axis.title.x = element_text(size = 14),                   # Aumenta el tamaño del label del eje X
+      axis.title.y = element_text(size = 14)                    # Aumenta el tamaño del label del eje Y
+    )
   Hist_mod_cont
   
   
-  ### Panel 1
-  Hist_mod_simp + Hist_mod_cont
+  quantile(Dist_Peak_age_mod_cont$V1,0.025) #percentil 2.5 (47.16848)
+  quantile(Dist_Peak_age_mod_cont$V1,0.975) #percentil 97.5 (49.35956)
   
-  ### Panel 2
-  Age_wage_P_plot + Age_wage_P_plot_cont
+  Age_wage_P_plot_cont <- ggplot(data_webs3, aes(x = Edad_win, y = log_ing_h_win)) +
+    geom_point(aes(color = "Real"), alpha = 0.5) +  # Puntos para valores reales
+    geom_line(aes(y = predicted_cont, color = "Predicho"), linewidth = 0.8) +  # Línea para valores predichos
+    scale_color_manual(values = c("Real" = "grey", "Predicho" = "red"),name="") +  # Colores de puntos y líneas
+    labs(title = "Modelo con controles",
+         x = "Edad",
+         y = "Ln(Ingreso por hora)") +
+    theme_minimal()   +
+    theme(
+      plot.title = element_text(size = 14, face = "bold"),      # Aumenta el tamaño del título
+      axis.title.x = element_text(size = 14),                   # Aumenta el tamaño del label del eje X
+      axis.title.y = element_text(size = 14)                    # Aumenta el tamaño del label del eje Y
+    )
+  print(Age_wage_P_plot_cont)
+  
+  
+  ### Exportar histogramas
+  hist <-  Hist_mod_simp + Hist_mod_cont
+  setwd(paste0(wd,"/Graficas"))
+  png("hist_boot.png", width=1200, height=600) # Formato grafica
+  hist
+  dev.off() # Cierra la grafica
+  
+  ### Exportar preducciones
+  plot_Age <- Age_wage_P_plot + Age_wage_P_plot_cont
+  setwd(paste0(wd,"/Graficas"))
+  png("Dispersion_boot.png",width=1200, height=600) # Formato grafica
+  plot_Age
+  dev.off() # Cierra la grafica
