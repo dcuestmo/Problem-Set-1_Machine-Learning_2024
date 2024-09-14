@@ -8,17 +8,27 @@ setwd(paste0(wd,"/Base_Datos"))
 data_webs <- import(file = "base_final.rds")
 
 # 1. Grafica de correlacion entre ingreso y edad ------------------------------
-summary(data_webs$log_ing_h_win) #imputado con valores atipicos
-scatter_plot <- ggplot(data = data_webs, aes(x = Edad_win, y = log_ing_h_win)) +
-  geom_point(color = "grey") +  # Puntos en azul
-  labs(title = "", 
-       x = "Edad", 
-       y = "Logaritmo del ingreso por hora") +
-  theme_minimal()
-png("Caja_sexo.png") # Formato grafica
-scatter_plot
-dev.off() # Cierra la grafica
 
+      # Crear la gráfica de dispersión con la línea de promedio
+      data_means <- data_webs %>%
+      group_by(Edad_win) %>%
+      summarise(mean_log_ing_h = mean(log_ing_h_win, na.rm = TRUE))
+    
+      scatter_plot <- ggplot(data = data_webs, aes(x = Edad_win, y = log_ing_h_win)) +
+      geom_point(color = "grey", alpha = 0.5) +  # Puntos en gris con transparencia para mejor visualización
+      geom_point(data = data_means, aes(x = Edad_win, y = mean_log_ing_h), color = "blue") +  # Línea de promedios en azul
+      labs(title = "Relación entre la Edad y el Logaritmo del Ingreso por Hora",
+           x = "Edad",
+           y = "Logaritmo del ingreso por hora") +
+      theme_minimal()
+      
+      #Guardar grafica
+      setwd(paste0(wd,"/Graficas"))
+      png("Caja_sexo.png") 
+      scatter_plot
+      dev.off()
+      
+        
  #2. Definir los posibles predictores de la base de datos---------------------- 
 
  #i. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (sin controles)
@@ -26,30 +36,29 @@ dev.off() # Cierra la grafica
   summary(model_Age_wage)
   stargazer(model_Age_wage, type = "text") # Modelo simple
   
-  #ii. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (con controles)
-  model_Age_wage_cont1 <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + Tamanio_empresa + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas_win + Experiencia_win, data = data_webs) #Realizamos la regresión
+#ii. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (con controles)
+  model_Age_wage_cont1 <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + Tamanio_empresa + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas_win , data = data_webs) #Realizamos la regresión
   summary(model_Age_wage_cont1)
   stargazer(model_Age_wage_cont1, type = "text") # Modelo con controles
 
-  
-  # Generar tablas de regresion
-  setwd(paste0(wd,"/Latex"))
-  stargazer(model_Age_wage, type = "text", keep = c("Edad", "Edad2") ) #Modelo completo
-  stargazer(model_Age_wage, model_Age_wage_cont1,
-            keep = c("Edad", "Edad2"),
-            dep.var.caption  = "Logaritmo del salario",
-            column.labels   = c("Sin controles", "Con controles"),
-            covariate.labels = c("Edad", "Edad al cuadrado"),
-            type="latex",out = "modelos_edad_ingresos.tex")
-  
-  # Leer el contenido del archivo
-  regression_table <- readLines("modelos_edad_ingresos.tex")
-  regression_table <- gsub("Edad_win", "Edad", regression_table) #Reemplazar "Observations" con "Observaciones"
-  regression_table <- gsub("Observations", "Observaciones", regression_table) #Reemplazar "Observations" con "Observaciones"
-  regression_table <- gsub("Adjusted R$^{2}$ ", "R$^{2}$ ajustado", regression_table)
-  writeLines(regression_table, "modelos_edad_ingresos.tex") #Escribir el contenido modificado de nuevo al archivo
-  
-  
+        # Generar tablas de regresion - modelos indiciales con todas las observaciones
+        setwd(paste0(wd,"/Latex"))
+        stargazer(model_Age_wage, type = "text", keep = c("Edad", "Edad2") ) #Modelo completo
+        stargazer(model_Age_wage, model_Age_wage_cont1,
+                  keep = c("Edad", "Edad2"),
+                  dep.var.caption  = "Logaritmo del salario",
+                  column.labels   = c("Sin controles", "Con controles"),
+                  covariate.labels = c("Edad", "Edad al cuadrado"),
+                  type="latex",out = "modelos_edad_ingresos.tex")
+        
+        # Leer el contenido del archivo
+        regression_table <- readLines("modelos_edad_ingresos.tex")
+        regression_table <- gsub("Edad_win", "Edad", regression_table) #Reemplazar "Observations" con "Observaciones"
+        regression_table <- gsub("Observations", "Observaciones", regression_table) #Reemplazar "Observations" con "Observaciones"
+        regression_table <- gsub("Adjusted R$^{2}$ ", "R$^{2}$ ajustado", regression_table)
+        writeLines(regression_table, "modelos_edad_ingresos.tex") #Escribir el contenido modificado de nuevo al archivo
+        
+        
   #3. Analisis de observaciones influyentes ------------------------------------
   
   ## leverage 
@@ -89,6 +98,9 @@ dev.off() # Cierra la grafica
   grid.arrange(a, b, ncol = 2)
   }
 
+  
+  
+  
   #Calcula el apalancamiento medio
   p <- mean(data_webs$leverage)
   p
@@ -189,6 +201,40 @@ dev.off() # Cierra la grafica
   regression_table <- gsub("Observations", "Observaciones", regression_table) #Reemplazar "Observations" con "Observaciones"
   regression_table <- gsub("Adjusted R$^{2}$ ", "R$^{2}$ ajustado", regression_table)
   writeLines(regression_table, "modelos_edad_ingresos_final.tex") #Escribir el contenido modificado de nuevo al archivo
+  
+  
+  #Modelo para colocar en el documento ----------------------------------------
+  
+  stargazer(model_Age_wage, model_Age_wage_cont1,model_Age_wage_cont1_vt,
+            keep = c("Edad_win", "Edad2"),
+            align = TRUE, 
+            dep.var.labels.include = FALSE,
+            dep.var.caption  = "Log(Ingresos por hora)",            
+            column.labels   = c("Sin Controles", "Con controles",  "Con controles Sin valores atípico"),
+            covariate.labels = c("Edad", "Edad al cuadrado"),
+            type="latex",
+            out = "modelos_edad_ingreso_table.tex")
+  
+  # Leer el contenido del archivo
+  regression_table <- readLines("modelos_edad_ingreso_table.tex")
+  regression_table <- gsub("Observations", "Observaciones", regression_table) #Reemplazar "Observations" con "Observaciones"
+  regression_table <- gsub("Adjusted R$^{2}$ ", "R$^{2}$ ajustado", regression_table)
+  writeLines(regression_table, "modelos_edad_ingreso_table.tex") #Escribir el contenido modificado de nuevo al archivo
+
+  
+  #Tabla de modelos finales
+  stargazer(model_Age_wage, model_Age_wage_cont1_vt,
+            keep = c("Edad_win", "Edad2"),
+            dep.var.caption  = "",
+            title = "",
+            align = TRUE,
+            header = FALSE,
+            dep.var.labels.include = FALSE,
+            column.labels   = c("Log(ingreso por hora)", "Log(ingreso por hora)"),
+            covariate.labels = c("Edad", "Edad al cuadrado"),
+            type="latex",
+            out = "modelos_edad_ingresos_final.tex")  
+  
   
   
   #5. Valor maximo -----------------------------------------------------------
@@ -323,14 +369,15 @@ dev.off() # Cierra la grafica
       plot.title = element_text(size = 14, face = "bold"),      # Aumenta el tamaño del título
       axis.title.x = element_text(size = 14),                   # Aumenta el tamaño del label del eje X
       axis.title.y = element_text(size = 14)                    # Aumenta el tamaño del label del eje Y
-    )  Hist_mod_simp
+    )  
+  Hist_mod_simp
   
   #Grafica
   Age_wage_P_plot <- ggplot(data_webs, aes(x = Edad_win, y = log_ing_h_win)) +
     geom_point(aes(color = "Real"), alpha = 0.5) +  # Puntos para valores reales
     geom_line(aes(y = predicted, color = "Predicho"), linewidth = 1) +  # Línea para valores predichos
     scale_color_manual(values = c("Real" = "grey", "Predicho" = "red"),name="") +  # Colores de puntos y líneas
-    labs(title = "Modelo simple",
+    labs(title = "Panel A:Modelo simple",
          x = "Edad",
          y = "Log(Ingreso por hora)") +
     theme_minimal() +
@@ -386,7 +433,7 @@ dev.off() # Cierra la grafica
     geom_point(aes(color = "Real"), alpha = 0.5) +  # Puntos para valores reales
     geom_line(aes(y = predicted_cont, color = "Predicho"), linewidth = 0.8) +  # Línea para valores predichos
     scale_color_manual(values = c("Real" = "grey", "Predicho" = "red"),name="") +  # Colores de puntos y líneas
-    labs(title = "Modelo con controles",
+    labs(title = "Panel B: Modelo con controles",
          x = "Edad",
          y = "Ln(Ingreso por hora)") +
     theme_minimal()   +
