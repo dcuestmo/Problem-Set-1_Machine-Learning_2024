@@ -13,7 +13,7 @@ names(data_webs)
 
 subset_data <- data_webs[, c("log_ing_h_win", "Edad_win", 
                              "Mujer", "dummy_jefe", 
-                             "Trabajo_formal", "Horas_trabajadas_win", 
+                             "Trabajo_informal", "Horas_trabajadas_win", 
                              "Experiencia_win", "Independiente")]
 
 #3. Calcular la matriz de correlación para esas variables
@@ -123,14 +123,15 @@ dev.off() # Cierra la grafica
 
 #Graficas de distribucion del ingreso 
 den_plot <- ggplot(data_webs, aes(Ingreso_hora_imp_win, fill=sex)) +
-  geom_density(alpha = 0.5) +  # Densidad superpuesta con transparencia
+  geom_density(alpha = 0.4) +  # Densidad superpuesta con transparencia
   theme_minimal() +  # Tema minimalista
-  labs(title = "Gráfico de densidad de ingresos por hora por sexo",
+  labs(title = "Gráfico de densidad del ingreso por hora según género",
        x = "Ingreso por hora",
        y = "Densidad",
        fill = "Sexo") +
   geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[sex == "Hombre"])), color = "blue", linetype = "dashed") +  # Línea punteada para la media de hombres
   geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[sex == "Mujer"])), color = "red", linetype = "dashed") +   # Línea punteada para la media de mujeres
+  guides(fill = guide_legend(title = NULL)) +  # Elimina el título de la leyenda
   theme(
     plot.title = element_text(size = 10)  # Cambia el tamaño y estilo del título
   )
