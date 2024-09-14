@@ -249,12 +249,67 @@ summary(data_webs$Nivel_educ)
                                                    yes= up,
                                                    no= Horas_trabajadas))
 
+#Mirar nuevamente las graficas de dispersion
+  
+  #Ingreso laboral por hora winsorizado
+  b5 <- ggplot(data_webs, aes(x = "", y = Horas_trabajadas_win)) +
+    geom_boxplot() +
+    theme_gray() +
+    labs(title = "Ingreso laboral por hora", x = "", y = "Miles de pesos") +
+    theme(axis.text = element_text(size = 8)) + 
+    theme(
+      plot.title = element_text(size = 10, face = "bold")  # Cambia el tamanio y estilo del título
+    )
+  b5
+  
+  #Edad winsorizada
+  b6 <- ggplot(data_webs, aes(x = "", y = Edad_win)) +
+    geom_boxplot() +
+    theme_gray() +
+    labs(title = "Edad", x = "", y = "Años") +
+    theme(axis.text = element_text(size = 8)) + 
+    theme(
+      plot.title = element_text(size = 10, face = "bold")  # Cambia el tamanio y estilo del título
+    )
+  b6
+  
+  #Experiencia winsorizada
+  b7 <- ggplot(data_webs, aes(x = "", y = Experiencia_win)) +
+    geom_boxplot() +
+    theme_gray() +
+    labs(title = "Experiencia", x = "", y = "Años") +
+    theme(axis.text = element_text(size = 8)) + 
+    theme(
+      plot.title = element_text(size = 10, face = "bold")  # Cambia el tamanio y estilo del título
+    )
+  b7
+  
+  #Horas winsorizada
+  b8 <- ggplot(data_webs, aes(x = "", y = Horas_trabajadas_win)) +
+    geom_boxplot() +
+    theme_gray() +
+    labs(title = "Horas trabajadas", x = "", y = "Horas") +
+    theme(axis.text = element_text(size = 8)) + 
+    theme(
+      plot.title = element_text(size = 10, face = "bold")  # Cambia el tamanio y estilo del título
+    )
+  b8  
+  
+  #Combinar graficas winsorizadas
+  setwd(paste0(wd,"/Graficas"))
+  png("graf_cajas_win") # Formato grafica
+  box_win <- (b5+b6)/(b7+b8)
+  box_win
+  dev.off() # Cierra la grafica
+  
+  
 # 7. Creacion variables nuevas -----------------------------------------------
   
   data_webs$log_ing_h_imp=log(data_webs$Ingreso_hora_imp) # con valores atipicos
-  data_webs$log_ing_h_imp2=log(data_webs$Ingreso_hora_imp2) #sin valores atipicos
+  data_webs$log_ing_h_win=log(data_webs$Ingreso_hora_imp_win) #sin valores atipicos
   data_webs <- data_webs %>% mutate (oficio_factor= as.factor(Profesion))
   data_webs <- data_webs %>% mutate (edu_factor= as.factor(Nivel_educ))
+  data_webs$Mujer <- ifelse(data_webs$Sexo == 0, 1, 0)
 
   data_webs <- data_webs %>%
     mutate( #logaritmo del salario por hora imputado

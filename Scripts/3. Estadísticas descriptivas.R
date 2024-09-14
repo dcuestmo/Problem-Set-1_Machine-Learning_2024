@@ -13,20 +13,20 @@ names(data_webs)
 
 #2. Grafico de correlacion de las variables continuas -------------------------
 
-subset_data <- data_webs[, c("log_ing_h_imp2", "Edad", 
-                             "Sexo", "dummy_jefe", 
-                             "formal", "Horas_trabajadas", 
-                             "Experiencia_años", "Independiente")]
+subset_data <- data_webs[, c("log_ing_h_win", "Edad", 
+                             "Mujer", "dummy_jefe", 
+                             "Trabajo_formal", "Horas_trabajadas_win", 
+                             "Experiencia_win", "Independiente")]
 
 #3. Calcular la matriz de correlación para esas variables
 setwd(paste0(wd,"/Graficas"))
-png("graf_corr") # Formato grafica
+png("graf_corr.png") # Formato grafica
 cor_matrix <- cor(subset_data, use="complete.obs")
 print(cor_matrix)
 corrplot(cor_matrix,
          tl.cex = 0.8,               # Tamaño de los labels
          tl.col = "black",           # Color de los labels (negro en este caso)
-         tl.srt = 45,                # Rotar las etiquetas 45 grados
+         tl.srt = 90,                # Rotar las etiquetas 45 grados
          addCoef.col = "black",      # Color de los coeficientes numéricos
          number.cex = 0.7)           # Tamaño de los números que muestran los coeficientes
 cor_matrix
@@ -34,8 +34,8 @@ dev.off() # Cierra la grafica
 
 
 #4. Tabla de variables principales
-des_vars= c("Ingreso_hora_imp2", "Edad", 
-            "Sexo", "formal",
+des_vars= c("Ingreso_hora_imp_win", "Edad", 
+            "Mujer", "formal",
             "Horas_trabajadas", "Experiencia_años", 
             "Independiente", "dummy_jefe")
 stargazer(data_webs[des_vars], type = "text") 
