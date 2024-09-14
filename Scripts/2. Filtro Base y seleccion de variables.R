@@ -39,19 +39,19 @@ data_webs <- data_webs %>%
     relab,        # Tipo de ocupacion
     cuentaPropia, # 1 si trabaja por  cuenta propia; 0 otro caso
     totalHoursWorked, # Horas trabajadas la semana pasada
-    sizeFirm,         # Tamño de la firma
+    sizeFirm,         # Tam?o de la firma
     hoursWorkUsual,   # Horas semanales trabajadas usualmente en ocuapcion principal  
-    y_otros_m,        # Ingreso laboral en especie (otros) - nominal mensual - ocupación principal
+    y_otros_m,        # Ingreso laboral en especie (otros) - nominal mensual - ocupaci?n principal
     y_total_m,        # Ingreso total de asalariados + independientes - nominal mensual
     y_total_m_ha,     # Ingreso total de asalariados + independientes - nominal por hora
-    fex_c,            # Factor de expansión anualizado
+    fex_c,            # Factor de expansi?n anualizado
     formal,           # Trabajo formal de acuerdo a seguridad social (1), otro caso (0)
     informal,         # Trabajo informal de acuerdo a seguridad social (1), otro caso (0)
     p6426,            # Tiempo trabajando en la empresa
     ingtot,           # Ingreso total 
     ingtotes,         # Ingreso total imputado  
     ingtotob,         # Ingreso total observado  
-    y_salary_m,       # Salario - nominal mensual - ocupación principal (incluye propinas y comisiones)
+    y_salary_m,       # Salario - nominal mensual - ocupaci?n principal (incluye propinas y comisiones)
     
     )%>%
     rename(
@@ -125,8 +125,8 @@ m2 <- ggplot(head(db_miss, 5), aes(x = reorder(skim_variable, +p_missing) , y = 
   geom_bar(stat = "identity", fill = "grey", color = "black") +
   coord_flip() +
   theme_minimal() +
-  labs(title = "Missings de variables", x = "Variables", y = "Missings") +
-  theme(axis.text = element_text(size = 8)) + 
+  labs(title = "", x = "Variables", y = "Missings") +
+  theme(axis.text = element_text(size = 10)) + 
   theme(
     plot.title = element_text(size = 10, face = "bold")  # Cambia el tamanio y estilo del tÃ­tulo
   )
@@ -169,8 +169,8 @@ summary(data_webs$Nivel_educ)
 
 # 6.1. Graficas de cajas variables continuas
 
-  ## Salarios por hora imputado - en logaritmo
-  summary(data_webs$Ingreso_hora_imp) # Mirar minimos y maximos de edad
+  ## Salarios por hora imputado 
+  summary(data_webs$Ingreso_hora_imp) 
 
     #Ingreso laboral
     b1 <- ggplot(data_webs, aes(x = "", y = Ingreso_hora_imp)) +
@@ -184,6 +184,7 @@ summary(data_webs$Nivel_educ)
     b1
 
     # Edad
+    summary(data_webs$Edad)
     b2 <- ggplot(data_webs, aes(x = "", y = Edad)) +
       geom_boxplot() +
       theme_gray() +
@@ -195,7 +196,8 @@ summary(data_webs$Nivel_educ)
     b2
     
    # Experiencia
-    b3 <- ggplot(data_webs, aes(x = "", y = Experiencia_anios)) +
+    summary(data_webs$Experiencia_anios)
+        b3 <- ggplot(data_webs, aes(x = "", y = Experiencia_anios)) +
       geom_boxplot() +
       theme_gray() +
       labs(title = "Experiencia", x = "", y = "anios") +
@@ -206,7 +208,7 @@ summary(data_webs$Nivel_educ)
     b3
     
   # Horas trabajadas
-  summary(data_webs$Horas_trabajadas) #Mirar minimos y maximos de edad
+  summary(data_webs$Horas_trabajadas) 
     b4 <- ggplot(data_webs, aes(x = "", y = Horas_trabajadas)) +
       geom_boxplot() +
       theme_gray() +
@@ -228,22 +230,22 @@ summary(data_webs$Nivel_educ)
 
   # Ingreso por hora
   up <- quantile(data_webs$Ingreso_hora_imp, 0.99, na.rm=T)
-  data_webs <- data_webs %>% mutate(Ingreso_hora_imp2=  ifelse( test=( Ingreso_hora_imp>= up), 
+  data_webs <- data_webs %>% mutate(Ingreso_hora_imp_win=  ifelse( test=( Ingreso_hora_imp>= up), 
                                                                 yes= up,
                                                                 no= Ingreso_hora_imp))
   # Edad 
   up <- quantile(data_webs$Edad, 0.99, na.rm=T)
-  data_webs <- data_webs %>% mutate(Edad=  ifelse( test=( Edad>= up), 
+  data_webs <- data_webs %>% mutate(Edad_win =  ifelse( test=( Edad>= up), 
                                                                 yes= up,
                                                                 no= Edad))
   # Experiencia 
   up <- quantile(data_webs$Experiencia, 0.99, na.rm=T)
-  data_webs <- data_webs %>% mutate(Experiencia=  ifelse( test=( Experiencia>= up), 
+  data_webs <- data_webs %>% mutate(Experiencia_win =  ifelse( test=( Experiencia>= up), 
                                                    yes= up,
                                                    no= Experiencia))
   # Horas Trabajadas
   up <- quantile(data_webs$Horas_trabajadas, 0.99, na.rm=T)
-  data_webs <- data_webs %>% mutate(Horas_trabajadas=  ifelse( test=( Horas_trabajadas>= up), 
+  data_webs <- data_webs %>% mutate(Horas_trabajadas_win =  ifelse( test=( Horas_trabajadas>= up), 
                                                    yes= up,
                                                    no= Horas_trabajadas))
 
