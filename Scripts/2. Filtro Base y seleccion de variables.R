@@ -1,5 +1,3 @@
-# Author: Juliet Molano
-
 #------------------------------------------------------------------------------#
 #-------------------- Script 2. Filtro y seleccion de variables----------------#
 #------------------------------------------------------------------------------#
@@ -13,11 +11,12 @@ names(data_webs)                     # Mirar nombres de las variables
 str(data_webs)                       # Mirar tipo de variables
 unique(data_webs$dominio)            # corroborando que sea Bogota
 table(data_webs$ocu)                 # La base tiene ocupados (1) y no ocupados (0)
-skim(data_webs) %>% head()
+skim(data_webs) %>% head()           # Se observa que desde un principio existen variables, como p550
+                                     # y y_gananciaNetaAgro_m, contienen muchos missing y se pueden omitir
 
 # 2. Filtrar la base de datos ---------------------------------------------------
 
-#Filtrar la base para mayores de 18 anios
+# Como menciona el enunciado, filtrar la base para utilizar solo los ocupados mayores de 18 anios
 data_webs <- data_webs %>%
   filter(age>=18 & ## Mayores de edad
            ocu==1) ## Empleados
@@ -52,6 +51,8 @@ data_webs <- data_webs %>%
     ingtotes,         # Ingreso total imputado  
     ingtotob,         # Ingreso total observado  
     y_salary_m,       # Salario - nominal mensual - ocupaci?n principal (incluye propinas y comisiones)
+    regSalud,         # Regimen de salud
+    cotPension        # El trabajador cotiza a pension
     
     )%>%
     rename(
@@ -80,6 +81,8 @@ data_webs <- data_webs %>%
     Ingreso_total_imputado = ingtotes,
     Ingreso_total_observado = ingtotob,
     Salario_ocupacion_principal_mensual = y_salary_m,
+    Regimen_salud = regSalud,
+    Cotiza_pension = cotPension,
   )
 
 #Crear la variable dummy jefe de hogar y experiencia en anios
@@ -133,7 +136,7 @@ m2 <- ggplot(head(db_miss, 5), aes(x = reorder(skim_variable, +p_missing) , y = 
 m2
 dev.off() # Cierra la grafica
 
-# Eliminar variable "otros ingresos" - muchos missings
+# Eliminar variable "otros ingresos" dado a que la mayor proporcion de sus valores son missings
 data_webs <- data_webs %>%
   dplyr::select(-Otros_ingresos)
 
