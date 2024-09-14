@@ -10,7 +10,7 @@
 # 0. Se define el directorio de extraccion de informacion ----------------------
 url <- 'https://ignaciomsarmiento.github.io/GEIH2018_sample/'
 browseURL(url)     # Podemos ingresar a la pagina y observar como se encuentra la pagina
-vignette("rvest")  # Se carga la explicaci?n de "rvest"
+vignette("rvest")  # Se carga la explicacion de "rvest"
 
 # 1. Extraccion y manejo de la base de datos -----------------------------------
 my_html = read_html(url)  # Lectura del enlace
