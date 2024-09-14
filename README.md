@@ -1,5 +1,13 @@
 # Problem-Set-1_Machine-Learning_2024
 
+**Integrantes**
+* Julieth Molano
+* Diego Cuesta
+* Henry Carvajal
+* Jorge Ramirez
+
+
+
 
 Este repositorio contiene todos los recursos necesarios para resolver el primer Problem Set del curso de Big Data y Machine Learning del segundo semestre de 2024 en la Universidad de los Andes. La información está organizada en varias carpetas, cada una con un propósito claro, para facilitar tanto la comprensión del análisis como la replicación de los resultados obtenidos.
 
