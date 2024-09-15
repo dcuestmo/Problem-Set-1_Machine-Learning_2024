@@ -92,17 +92,17 @@ Bootstrap_FWL_IC <- boot.ci(Bootstrap_FWL, type = c("perc"), conf = 0.99)
 
 # 4.1  Submuestra de mujeres ---------------------------------------------------
 Female_Data         <- subset(Data_P4, Female == 1)
-Salario_Edad_Female <- lm(log_ing_h_win ~ Edad + Edad2, data = Female_Data) 
+Salario_Edad_Female <- lm(log_ing_h_win ~ Edad_win + Edad2, data = Female_Data) 
 stargazer(Salario_Edad_Female, type = "text",omit = "Constant")
   
-# Se realizan predicciones con el modelo para observar el comportamiento de la brecha salarial
+# Se realizan predicciones con el modelo para observar el comportamiento del perfil salario - edad diferenciando por género
 Salario_Edad_Female_P <-  predict(Salario_Edad_Female, newdata = Female_Data)
 Female_Data$Prediccion <- predict(Salario_Edad_Female, newdata = Female_Data)
   
-# Se calculan los intervalos de confianza a través de bootstrap
+# Se calcula la edad maxima 
 
 Female_funcion_2 <-function(Data,Indice){
-    Reg_1 <- lm(log_ing_h_win ~ Edad + Edad2, data = Data, subset= Indice)
+    Reg_1 <- lm(log_ing_h_win ~ Edad_win + Edad2, data = Data, subset= Indice)
     b_1 <- Reg_1$coefficients[2]
     b_2 <- Reg_1$coefficients[3]
     max_edad <- -(b_1)/(2*b_2)
@@ -110,7 +110,7 @@ Female_funcion_2 <-function(Data,Indice){
 }
   
 # Se verifica que la función funciona de acuerdo con la base original 
-Female_funcion_2(Female_Data,1:nrow(Female_Data))
+Max_Female =  Female_funcion_2(Female_Data,1:nrow(Female_Data))
   
 #Se utiliza la funcion boot para estimar la regresion con bootstrap
 set.seed(20242) # Se fija como semilla el año 2024 y el segundo semestre
@@ -122,35 +122,10 @@ setnames(Bootstrap_Salario_Edad_Female_results,"V1","Max_Edad_Female")
 hist(Bootstrap_Salario_Edad_Female_results$Max_Edad_Female) # Se obtiene la distribucion del valor maximo de la edad 
 Lim_inf_Female = quantile(Bootstrap_Salario_Edad_Female_results$Max_Edad_Female,0.025) #percentil 2.5 (42.53374)
 Lim_sup_Female = quantile(Bootstrap_Salario_Edad_Female_results$Max_Edad_Female,0.975) #percentil 97.5 (44.71811)
-  
-# Se gráfican los resultados observados
 
-Female_plot <- ggplot(Female_Data, aes(x = Edad, y = log_ing_h_win)) +
-    # Puntos para valores observados
-    geom_point(aes(color = "Valor_observado"), alpha = 0.05,size=2) +  
-    # Línea para valores predichos
-    geom_line(aes(y = Salario_Edad_Female_P, color = "Valor_Predicho"), size = 1.5) +  
-    # Escala de colores personalizada
-    scale_color_manual(values = c("Valor_observado" = "Red", "Valor_Predicho" = "Black"),name="") +  # Colores de puntos y líneas
-    labs(title = "Panel B: Mujeres",
-         x = "Edad",
-         y = "Ln(Salario por hora)") +
-    theme_minimal() +
-  theme(
-    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"), # Centrar y aumentar el tamaño del título
-    axis.title.x = element_text(size = 12), # Tamaño de las etiquetas de los ejes
-    axis.title.y = element_text(size = 12),
-    legend.position = "top", # Colocar la leyenda en la parte superior
-    legend.text = element_text(size = 10)
-  ) +
-  xlim(20, 60) +  # Rango de edades (ejemplo: entre 0 y 80 años)
-  ylim(4, 12)      # Rango de salarios logarítmicos (ejemplo)
-  print(Female_plot)
-  
-  
 # 4.2  Submuestra de hombres ---------------------------------------------------
 Male_Data         <- subset(Data_P4, Female == 0)
-Salario_Edad_Male <- lm(log_ing_h_win ~ Edad + Edad2, data = Male_Data) 
+Salario_Edad_Male <- lm(log_ing_h_win ~ Edad_win + Edad2, data = Male_Data) 
 stargazer(Salario_Edad_Male, type = "text",omit = "Constant")
 
 # Se realizan predicciones con el modelo para observar el comportamiento de la brecha salarial
@@ -160,7 +135,7 @@ Male_Data$Prediccion <- predict(Salario_Edad_Male, newdata = Male_Data)
 # Se calculan los intervalos de confianza a través de bootstrap
 
 Male_funcion_2 <-function(Data,Indice){
-  Reg_1 <- lm(log_ing_h_win ~ Edad + Edad2, data = Data, subset= Indice)
+  Reg_1 <- lm(log_ing_h_win ~ Edad_win + Edad2, data = Data, subset= Indice)
   b_1 <- Reg_1$coefficients[2]
   b_2 <- Reg_1$coefficients[3]
   max_edad <- -(b_1)/(2*b_2)
@@ -168,7 +143,7 @@ Male_funcion_2 <-function(Data,Indice){
 }
 
 # Se verifica que la función funciona de acuerdo con la base original 
-Male_funcion_2(Male_Data,1:nrow(Male_Data))
+Max_Male = Male_funcion_2(Male_Data,1:nrow(Male_Data))
 
 #Se utiliza la funcion boot para estimar la regresion con bootstrap
 set.seed(20242) # Se fija como semilla el año 2024 y el segundo semestre
@@ -181,34 +156,10 @@ hist(Bootstrap_Salario_Edad_Male_results$Max_Edad_Male) # Se obtiene la distribu
 Lim_inf_Male = quantile(Bootstrap_Salario_Edad_Male_results$Max_Edad_Male,0.025) #percentil 2.5 (42.53374)
 Lim_sup_Male = quantile(Bootstrap_Salario_Edad_Male_results$Max_Edad_Male,0.975) #percentil 97.5 (44.71811)
 
-# Se gráfican los resultados observados
-Male_plot <- ggplot(Male_Data, aes(x = Edad, y = log_ing_h_win)) +
-  # Puntos para valores observados
-  geom_point(aes(color = "Valor_observado"), alpha = 0.05,size=2) +  
-  # Línea para valores predichos
-  geom_line(aes(y = Salario_Edad_Male_P, color = "Valor_Predicho"), size = 1.5) +  
-  # Escala de colores personalizada
-  scale_color_manual(values = c("Valor_observado" = "Blue", "Valor_Predicho" = "Black"),name="") +  # Colores de puntos y líneas
-  labs(title = "Panel B: Mujeres",
-       x = "Edad",
-       y = "Ln(Salario por hora)") +
-  scale_color_manual(values = c("Mujeres" = "Red", "Hombres" = "Blue"), name = "") + # Cambiar colores de las líneas
-  theme_minimal() +
-  theme(
-    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"), # Centrar y aumentar el tamaño del título
-    axis.title.x = element_text(size = 12), # Tamaño de las etiquetas de los ejes
-    axis.title.y = element_text(size = 12),
-    legend.position = "top", # Colocar la leyenda en la parte superior
-    legend.text = element_text(size = 10)
-  ) +
-  xlim(20, 60) +  # Rango de edades (ejemplo: entre 0 y 80 años)
-  ylim(4, 12)      # Rango de salarios logarítmicos (ejemplo)
-print(Male_plot)
-
 # 4.3 Resultados conjuntos -----------------------------------------------------
-
 # Se muestran los resultados con stargazer
-stargazer(Salario_Edad_Female,Salario_Edad_Male,type = "text",
+setwd(paste0(wd,"/Latex"))
+stargazer(Salario_Edad_Female,Salario_Edad_Male,type = "text",out = "Punto_4_Perfil_Salario_Edad_Genero.tex",
           omit = "Constant",                             # Quitar intercepto              
           omit.stat = c("f", "ser", "aic", "bic", "ll","rsq"), # Omitir estadísticas no deseadas
           dep.var.labels = c("Ln(Salario por hora)"),
@@ -216,52 +167,64 @@ stargazer(Salario_Edad_Female,Salario_Edad_Male,type = "text",
           column.labels = c("Mujeres", "Hombres"),
           notes = "Errores estándar en paréntesis") # Añadir la nota
 
+# 4.4 Perfil salario vs edad por genero -----------------------------------------------------
+age_seq <- seq(min(Data_P4$Edad_win), max(Data_P4$Edad_win), by = 1)  # edades
+predic_Male <- predict(Salario_Edad_Male, newdata = data.frame(Edad_win=age_seq,Edad2=age_seq*age_seq))  # Predicciones
+predic_Female <- predict(Salario_Edad_Female, newdata = data.frame(Edad_win=age_seq,Edad2=age_seq*age_seq))  # Predicciones
 
-# 4.4. Se realiza un plot perfil edad - salario diferenciando por sexo ---------
+setwd(paste0(wd,"/Graficas"))
+png(filename = "Perfil_Salario_Genero.png",width = 1200, height = 600, res = 150)  #
 
-Data_Observada <- rbind(Female_Data,Male_Data)
-Data_Observada$Sexo <- factor(Data_Observada$Sexo, levels = c(0, 1), labels = c("Mujeres", "Hombres"))
+plot(Data_P4$Edad_win, (Data_P4$log_ing_h_win), 
+     xlab = "Edad", ylab = "Ln(Salario por hora)", 
+     col = alpha("grey", 0.8), main = "Perfil Salario-Edad por género", 
+     xlim = c(15, 75), ylim = c(5, 11),  # Establecer rango y frecuencia en ejes X e Y
+     xaxp = c(20, 80, 6), yaxp = c(5, 11, 6))  # Establecer frecuencia en ejes X e Y
+lines(age_seq, predic_Male, col = "red", lwd = 1)  # Línea de predicciones para Hombres
+lines(age_seq, predic_Female, col = "blue", lwd = 1)  # Línea de predicciones para Mujeres
 
-# Plot de prediccion por edad y sexo
-Plot_Genero <- ggplot(Data_Observada, aes(x = Edad, y = Prediccion, color = Sexo)) +
-  geom_line(size = 1)+
-  labs(x = "Edad",
-       y = "Ln(Salario por hora)") +
-    theme_minimal() +
-    theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"), # Centrar y aumentar el tamaño del título
-      axis.title.x = element_text(size = 12), # Tamaño de las etiquetas de los ejes
-      axis.title.y = element_text(size = 12),
-      legend.position = "top", # Colocar la leyenda en la parte superior
-      legend.text = element_text(size = 10))
-print(Plot_Genero)
+# Colocamos líneas verticales
+abline(v = Max_Male, col = "red", lwd = 2, lty = 1)  # Línea discontinua para el valor central Hombres
+abline(v = Lim_inf_Male, col = "red", lwd = 2, lty = 3) 
+abline(v = Lim_sup_Male, col = "red", lwd = 2, lty = 3) 
+abline(v = Max_Female, col = "blue", lwd = 2, lty = 1)  # Línea discontinua para el valor central Mujeres
+abline(v = Lim_inf_Female, col = "blue", lwd = 2, lty = 3) 
+abline(v = Lim_sup_Female, col = "blue", lwd = 2, lty = 3) 
 
-# 4.5. Se realiza un plot de la distribucuón de edad vs el ingreso maximo ---------
+# Colocamos leyenda
+legend("topright",                    # posición de la leyenda
+       legend = c("Mujer", "Hombre"), # etiquetas
+       col = c("blue", "red"),        # colores de las líneas en la leyenda
+       lwd = 1,                       # grosor de las líneas en la leyenda
+       bg = "white")                  # color de fondo de la leyenda
 
-Histograma_Female <- ggplot(Bootstrap_Salario_Edad_Female_results, aes(x = Max_Edad_Female)) +
-  geom_histogram(bins = 50, color = "White", fill = "Red") +
-  labs(x ='Edad', y='Frecuencia', title = "Panel A: Mujeres")+
-  geom_vline(aes(xintercept = mean(Bootstrap_Salario_Edad_Female_results$Max_Edad_Female)), color = "Black", size = 1)+
-  theme_minimal()+
-  theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"), # Centrar y aumentar el tamaño del título
-      axis.title.x = element_text(size = 12), # Tamaño de las etiquetas de los ejes
-      axis.title.y = element_text(size = 12),
-      legend.position = "top", # Colocar la leyenda en la parte superior
-      legend.text = element_text(size = 10))
-Histograma_Female
+# Agregar pie de página
+#mtext("Lineas verticales continuas: Peak ages para cada sexo. Lineas verticales punteadas: Intervalos de confianza.", side = 1, line = 3.8, adj = 0, cex = 0.6)
 
-Histograma_Male <- ggplot(Bootstrap_Salario_Edad_Male_results, aes(x = Max_Edad_Male)) +
-  geom_histogram(bins = 50, color = "White", fill = "Blue") +
-  labs(x ='Edad', y='Frecuencia', title = "Panel B: Hombres")+
-  geom_vline(aes(xintercept = mean(Bootstrap_Salario_Edad_Male_results$Max_Edad_Male)), color = "Black", size = 1)+
-  theme_minimal()+
-  theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"), # Centrar y aumentar el tamaño del título
-        axis.title.x = element_text(size = 12), # Tamaño de las etiquetas de los ejes
-        axis.title.y = element_text(size = 12),
-        legend.position = "top", # Colocar la leyenda en la parte superior
-        legend.text = element_text(size = 10))
-Histograma_Male
+# Agregar etiquetas para las líneas rojas y azules
+text(Max_Male+2, 5, "45,2", col = "red", pos = 4)  # Etiqueta para línea roja
+text(Max_Female-2, 5, "39,6", col = "blue", pos = 2)  # Etiqueta para línea azul
+
+# cerrar el pdf
+dev.off()
+dev.off()
 
 
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
