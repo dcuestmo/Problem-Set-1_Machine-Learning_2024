@@ -19,9 +19,6 @@ gender_earnings_gap_1 <- lm(log_ing_h_win ~ Female, data = Data_P4)
 summary(gender_earnings_gap_1)  # Resumen de resultados
 Coeficiente_interes_1_OLS <-gender_earnings_gap_1$coefficients[2]
 
-stargazer(gender_earnings_gap_1, type = "text")  # Para visualizar en la consola
-stargazer(gender_earnings_gap_1)                 # Para llevar a LATEX
-
 # 3. Literal B: Conditional wage gap -------------------------------------------
 # Esta seccion busca estimar si se cumple el slogan "Equal pay for equal work". 
 
@@ -53,19 +50,18 @@ Female      <- FWL_resid_2   # Cambiar el nombre para facilitar la presetnacion 
 gender_earnings_gap_2_FWL <- lm(FWL_resid_1 ~ Female)
 Coeficiente_interes_2_FWL <- gender_earnings_gap_2_FWL$coefficients[2]
 
-stargazer(gender_earnings_gap_2_FWL, type = "text")  # Para visualizar en la consola
-stargazer(gender_earnings_gap_2_FWL)                 # Para llevar a LATEX
-  
 # 3.3 Resultados conjuntos -----------------------------------------------------
 
 # Se muestran los resultados con stargazer
-stargazer(gender_earnings_gap_1,gender_earnings_gap_2_FWL,type = "text",
+# Guardar resultados en Latex
+setwd(paste0(wd,"/Latex"))
+stargazer(gender_earnings_gap_1,gender_earnings_gap_2_FWL,type = "text",out = "Punto_4_Brecha_Salarial_Genero.tex",
           omit = "Constant",                             # Quitar intercepto              
           omit.stat = c("f", "ser", "aic", "bic", "ll","rsq"), # Omitir estadísticas no deseadas
           dep.var.labels = c("Ln(Salario por hora) sin controles","Ln(Salario por hora) con controles"),
           covariate.labels = "Female",
           notes = "Errores estándar en paréntesis") # Añadir la nota
-  
+
 # 3.4 FWL usando boopstrap -----------------------------------------------------
 # Se crea una funcion para estimar la regresion usando FWL
 
@@ -87,6 +83,7 @@ Female_funcion(Data_P4,1:nrow(Data_P4)) # Efectivamente genera el mismo coeficie
 set.seed(20242) # Se fija como semilla el año 2024 y el segundo semestre
 Bootstrap_FWL <- boot(Data_P4, Female_funcion, R = 1000)
 Bootstrap_FWL
+Bootstrap_FWL_IC <- boot.ci(Bootstrap_FWL, type = c("perc"), conf = 0.99)
 
 # 4. Literal C: Perfil salario vs edad por genero ------------------------------
 
