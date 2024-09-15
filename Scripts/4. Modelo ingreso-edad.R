@@ -325,7 +325,7 @@ data_webs <- import(file = "base_final.rds")
     Hist_mod_cont <- ggplot(Dist_Peak_age_mod_cont, aes(x = V1)) +
       geom_histogram(bins = 50, color = "white", fill = "grey") +
       labs(x = 'Edad', y = 'Frecuencia', title = "Modelo con controles") +
-      geom_vline(aes(xintercept = Peak_age_mod_cont), color = "red", linewidth = 1) +
+      geom_vline(aes(xintercept = Peak_age_mod_controles), color = "red", linewidth = 1) +
       labs(title = "Panel B: Modelo con controles",
            x = "Edad",
            y = "Ln(Ingreso por hora)") +
@@ -370,3 +370,6 @@ data_webs <- import(file = "base_final.rds")
     png("Dispersion_boot.png",width=1200, height=600) # Formato grafica
     plot_Age
     dev.off() # Cierra la grafica
+    
+    
+    
