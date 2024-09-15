@@ -15,7 +15,7 @@ data_webs <- import(file = "base_final.rds")
     stargazer(model_Age_wage, type = "text") # Modelo simple
     
   #ii. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (con controles)
-    model_Age_wage_cont1 <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + tfirma_factor + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas_win , data = data_webs) #Realizamos la regresión
+    model_Age_wage_cont1 <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + tfirma_factor + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas_win + Experiencia_win, data = data_webs) #Realizamos la regresión
     summary(model_Age_wage_cont1)
     stargazer(model_Age_wage_cont1, type = "text") # Modelo con controles
 
@@ -173,7 +173,6 @@ data_webs <- import(file = "base_final.rds")
         Edad_P<- -(age_1/(2*age_2))       
         return (Edad_P)
       }
-      
       Peak_age_mod_simple <- Peak_age_fun(age_1 = model_Age_wage$coefficients[2],age_2 = model_Age_wage$coefficients[3])
       Peak_age_mod_simple
   
@@ -262,6 +261,7 @@ data_webs <- import(file = "base_final.rds")
     #Se utiliza la funcion boot para estimar la regresion con bootstrap
     set.seed(2365)
     boot_results_mod_simple <- boot(data_webs, Age_Wage_Profile_fn, R = 1000)
+    boot_results_mod_simple
     Dist_Peak_age_mod_simple <- as.data.frame(boot_results_mod_simple$t)
     hist(Dist_Peak_age_mod_simple$V1) #distribucion del valor maximo de la edad con bootstrap
     
@@ -306,7 +306,7 @@ data_webs <- import(file = "base_final.rds")
   
     #Intervalos de confianza con bootstrap
     Age_Wage_Profile_mod_cont<-function(data_webs3,index){
-      f <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + Tamanio_empresa + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas + Experiencia_win, data = data_webs3, subset = index)
+      f <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + tfirma_factor + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas_win + Experiencia_win, data = data_webs3, subset = index)
       b1 <- f$coefficients[2]
       b2 <- f$coefficients[3]
       max_edad <- -(b1)/(2*b2)
@@ -318,6 +318,7 @@ data_webs <- import(file = "base_final.rds")
     #Se utiliza la funcion boot para estimar la regresion con bootstrap
     set.seed(2365)
     boot_results_mod_cont <- boot(data_webs3, Age_Wage_Profile_mod_cont, R = 1000)
+    boot_results_mod_cont
     Dist_Peak_age_mod_cont <- as.data.frame(boot_results_mod_cont$t)
     hist(Dist_Peak_age_mod_cont$V1) #distribucion del valor maximo de la edad con bootstrap
     
