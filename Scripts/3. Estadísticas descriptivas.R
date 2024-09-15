@@ -147,8 +147,14 @@ den_plot <- ggplot(data_webs, aes(Ingreso_hora_imp_win, fill=sex)) +
   geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[sex == "Mujer"])), color = "red", linetype = "dashed") +   # Línea punteada para la media de mujeres
   guides(fill = guide_legend(title = NULL, position = "bottom")) +  # Mueve la leyenda a la parte inferior
   theme(
-    plot.title = element_text(size = 10),  # Cambia el tamaño y estilo del título
-    legend.position = "bottom"  # Asegura que la leyenda esté en la parte inferior
+    plot.title = element_text(size = 18),
+    axis.title.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14),
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 16),
+    legend.position = "bottom"
   )
 
 # Gráficas de distribución del ingreso para independientes
@@ -167,8 +173,14 @@ den_plot_independientes <- ggplot(data_webs, aes(Ingreso_hora_imp_win, fill=Inde
                     labels = c("0" = "Dependientes", "1" = "Independientes")) +  # Define los colores y etiquetas de la leyenda
   guides(fill = guide_legend(title = NULL, position = "bottom")) +  # Mueve la leyenda a la parte inferior
   theme(
-    plot.title = element_text(size = 10),  # Cambia el tamaño y estilo del título
-    legend.position = "bottom"  # Asegura que la leyenda esté en la parte inferior
+    plot.title = element_text(size = 18),
+    axis.title.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14),
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 16),
+    legend.position = "bottom"
   )
 
 
@@ -188,8 +200,14 @@ den_plot_informales <- ggplot(data_webs, aes(Ingreso_hora_imp_win, fill=Trabajo_
                     labels = c("0" = "Informal", "1" = "Formal")) +  # Define los colores y etiquetas de la leyenda
   guides(fill = guide_legend(title = NULL, position = "bottom")) +  # Mueve la leyenda a la parte inferior
   theme(
-    plot.title = element_text(size = 10),  # Cambia el tamaño y estilo del título
-    legend.position = "bottom"  # Asegura que la leyenda esté en la parte inferior
+    plot.title = element_text(size = 18),
+    axis.title.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14),
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 16),
+    legend.position = "bottom"
   )
 
 ##Combinar graficas
