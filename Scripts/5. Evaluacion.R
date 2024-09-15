@@ -118,3 +118,49 @@ abline(0, 1, col = "red")  # Línea de identidad
 
 # Resaltar los outliers en el gráfico
 points(outliers$log_ing_h_imp, outliers$mp6, pch = 19, col = "red")
+
+
+# LOOCV -------------------------------------------
+
+m6f<-log_ing_h_imp ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ Nivel_educ
+m7f<-log_ing_h_imp ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE):poly(Nivel_educ,raw=TRUE)
+
+install.packages("snow")
+library(parallel)
+library(progress)
+
+cluster <- parallel::makeCluster(parallel::detectCores()-1, type = "SOCK")
+doParallel::registerDoParallel(cluster)
+
+ctrl <- trainControl(
+  method = "LOOCV") ## input the method Leave One Out Cross Validation
+
+# Configuración de la barra de progreso
+pb <- progress_bar$new(
+  format = " Entrenamiento: [:bar] :percent en :elapsed tiempo, Tiempo estimado restante: :eta",
+  total = 100, # Puede ajustar este total según tus necesidades
+  clear = FALSE,
+  width = 60
+)
+
+# Función personalizada de resumen para actualizaciones de la barra de progreso
+custom_summary <- function(data, lev = NULL, model = NULL) {
+  pb$tick() # Incrementa la barra de progreso
+  defaultSummary(data, lev, model) # Usa el resumen predeterminado
+}
+
+# Actualiza el control de entrenamiento con la función de resumen personalizada
+ctrl$summaryFunction <- custom_summary
+
+modelo1 <- train(m7f,
+                 data = nlsy,
+                 method = 'lm', 
+                 trControl= ctrl)
+
+parallel::stopCluster(cluster)
+unregister_dopar()
+
+#H
+
+p<-c(1,2,3)
+
