@@ -36,9 +36,23 @@ des_vars= c("Ingreso_hora_imp_win", "Edad_win",
             "Mujer", "Trabajo_informal",
             "Horas_trabajadas_win", "Experiencia_win", 
             "Independiente", "dummy_jefe")
-stargazer(data_webs[des_vars], type = "text") 
-stargazer(data_webs[des_vars], type = "text", title="Estadísticas Descriptivas", digits=1, out="Tabla_Est_descriptivas.txt")
-stargazer(data_webs[des_vars], digits=1)
+nuevos_nombres <- c("Ingreso por Hora (Winsorizado)", "Edad (Winsorizada)", 
+                    "Sexo (Mujer)", "Trabajo Informal",
+                    "Horas Trabajadas (Winsorizado)", "Experiencia (Winsorizada)", 
+                    "Independiente", "Jefe de hogar")
+
+# Crear la tabla con los nuevos nombres de las variables
+stargazer(data_webs[des_vars], 
+                     type = "text", 
+                     title = "Estadísticas Descriptivas", 
+                     digits = 1, 
+                     out = "Tabla_Est_descriptivas.txt",
+                     covariate.labels = nuevos_nombres)
+#Codigo latex
+stargazer(data_webs[des_vars], 
+          title = "Estadísticas Descriptivas", 
+          digits = 1,
+          covariate.labels = nuevos_nombres)
 
 
 #5. Graficas de distribucion generales ----------------------------------------
