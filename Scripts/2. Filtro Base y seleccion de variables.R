@@ -313,6 +313,8 @@ summary(data_webs$Nivel_educ)
   data_webs <- data_webs %>% mutate (oficio_factor= as.factor(Profesion))
   data_webs <- data_webs %>% mutate (edu_factor= as.factor(Nivel_educ))
   data_webs <- data_webs %>% mutate (estrato_factor= as.factor(Estrato))
+  data_webs <- data_webs %>% mutate (tfirma_factor= as.factor(Tamanio_empresa))
+
   data_webs$Mujer <- ifelse(data_webs$Sexo == 0, 1, 0)
 
   data_webs <- data_webs %>%
