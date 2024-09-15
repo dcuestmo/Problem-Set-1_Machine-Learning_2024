@@ -29,4 +29,5 @@ Con respecto a las carpetas, estas contienen la siguiente información:
 **Base_Datos**: En esta carperta se almacena la base de datos ajustada que es empleada para realizar el taller: "base_final.rds". Adicional contiene las tablas consolidadas con la información obtenida tras el proceso de extracción de datos, facilitando su carga y uso a lo largo del proyecto.
 
 **Graficas**: Esta carpeta almacena las visualizaciones que ayudaron en el análisis de la información y permitieron la evaluación visual de los resultados obtenidos durante el taller. 
+
 **Latex** Esta carpeta almacena los documentos .tex con los resultados de las diferentes regresiones para poder ser posteriormente compiladas en la herramienta de edición de texto overleraf. 
