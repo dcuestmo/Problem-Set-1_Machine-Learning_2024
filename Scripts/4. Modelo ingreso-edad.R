@@ -7,29 +7,7 @@
 setwd(paste0(wd,"/Base_Datos"))
 data_webs <- import(file = "base_final.rds")
 
-# 1. Grafica de correlacion entre ingreso y edad ------------------------------
-
-      # Mirar la gráfica de dispersión con la línea de promedio
-      data_means <- data_webs %>%
-      group_by(Edad_win) %>%
-      summarise(mean_log_ing_h = mean(log_ing_h_win, na.rm = TRUE))
-    
-      scatter_plot <- ggplot(data = data_webs, aes(x = Edad_win, y = log_ing_h_win)) +
-      geom_point(color = "grey", alpha = 0.5) +  # Puntos en gris con transparencia para mejor visualización
-      geom_point(data = data_means, aes(x = Edad_win, y = mean_log_ing_h), color = "blue") +  # Línea de promedios en azul
-      labs(title = "Relación entre la Edad y el Logaritmo del Ingreso por Hora",
-           x = "Edad",
-           y = "Logaritmo del ingreso por hora") +
-      theme_minimal()
-      
-      #Guardar grafica
-      setwd(paste0(wd,"/Graficas"))
-      png("Caja_sexo.png") 
-      scatter_plot
-      dev.off()
-      
-        
- #2. Definir los posibles predictores de la base de datos---------------------- 
+#1. Definir los posibles predictores de la base de datos---------------------- 
 
    #i. Regresión: Log(wage)=b1 + b2(age) + b3(age)^2 + u (sin controles)
     model_Age_wage <- lm(log_ing_h_win ~ Edad_win + Edad2, data = data_webs) #Realizamos la regresión
@@ -61,7 +39,7 @@ data_webs <- import(file = "base_final.rds")
         regression_table <- gsub("Adjusted R$^{2}$ ", "R$^{2}$ ajustado", regression_table)
         writeLines(regression_table, "modelos_edad_ingresos.tex") #Escribir el contenido modificado de nuevo al archivo
         
-  #3. Analisis de observaciones influyentes ------------------------------------
+  #2. Analisis de observaciones influyentes ------------------------------------
   
     #i. Eliminar observaciones con alto apalancamiento
               
@@ -102,7 +80,7 @@ data_webs <- import(file = "base_final.rds")
     
 
   
-  #4. Analisis de valores atipicos del modelo-----------------------------------
+  #3. Analisis de valores atipicos del modelo-----------------------------------
     
     #i. Grafucas de los residuos 
     residuos_c <- ggplot(data = data_webs, 
@@ -128,7 +106,7 @@ data_webs <- import(file = "base_final.rds")
     summary(model_Age_wage_cont1_vt)
     stargazer(model_Age_wage_cont1_vt, type = "text") # Modelo con controles
     
-  #5. Comparacion modelos con controles analisis-----------------------------------
+  #4. Comparacion modelos con controles analisis-----------------------------------
     
 
   #Tabla de modelo con controles
@@ -151,7 +129,7 @@ data_webs <- import(file = "base_final.rds")
   writeLines(regression_table, "modelos_edad_ingresos_controles.tex") #Escribir el contenido modificado de nuevo al archivo
   
  
-  #6. Modelos para colocar en el documento ----------------------------------------
+  #5. Modelos para colocar en el documento ----------------------------------------
   
   stargazer(model_Age_wage, model_Age_wage_cont1_vt,
             keep = c("Edad_win", "Edad2"),
@@ -172,7 +150,7 @@ data_webs <- import(file = "base_final.rds")
   writeLines(regression_table, "tabla_final.tex") #Escribir el contenido modificado de nuevo al archivo
 
 
-  #7. Valor maximo -----------------------------------------------------------
+  #6. Valor maximo -----------------------------------------------------------
   
   #i. Modelo sin controles
   
@@ -222,7 +200,7 @@ data_webs <- import(file = "base_final.rds")
       Peak_age_mod_controles
       
   
-  # 8. Calculo de los errores de los modelos ----------------------------------
+  # 7. Calculo de los errores de los modelos ----------------------------------
   
     # Realiza predicciones con el modelo
     data_webs$predicted <- predict(model_Age_wage, newdata = data_webs) #modelo sencillo
@@ -265,7 +243,7 @@ data_webs <- import(file = "base_final.rds")
     (rmse_cont <-sqrt(mean(err2_cont, na.rm = TRUE))) # 0.40
     
   
-  # 9. BOOTSTRAP --------------------------------------------------------------
+  # 8. BOOTSTRAP --------------------------------------------------------------
 
 
   #i. Modelo simple
