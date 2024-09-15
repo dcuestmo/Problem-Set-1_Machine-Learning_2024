@@ -118,3 +118,6 @@ abline(0, 1, col = "red")  # Línea de identidad
 
 # Resaltar los outliers en el gráfico
 points(outliers$log_ing_h_imp, outliers$mp6, pch = 19, col = "red")
+
+
+
