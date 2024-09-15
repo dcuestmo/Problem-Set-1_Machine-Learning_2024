@@ -23,16 +23,19 @@ dim(train)
 glimpse(nlsy)
 
 # Definimos los modelos a utilizar ----------------------------
+# Utilizando la variable sin valores atipicos.
 
-m1<-lm(log_ing_h_imp ~ Edad + Edad2, data = nlsy)
-m2<-lm(log_ing_h_imp ~ Sexo, data = nlsy)
-m3<-lm(log_ing_h_imp ~ Sexo + Edad + Edad2, data = nlsy)
+m1<-lm(log_ing_h_win ~ Edad + Edad2, data = train)
+m2<-lm(log_ing_h_win ~ Sexo, data = train)
+m3<-lm(log_ing_h_win ~ Sexo + Edad + Edad2, data = train)
+m3_1 <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + tfirma_factor + Trabajo_informal + Independiente + oficio_factor  + Horas_trabajadas_win + Experiencia_win, data = train)
+
 
 # Otros modelos poly(educ,8,raw=TRUE
-m4<-lm(log_ing_h_imp ~ poly(Edad,8,raw=TRUE)*Sexo, data = nlsy)
-m5<-lm(log_ing_h_imp ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ Sexo, data = nlsy)
-m6<-lm(log_ing_h_imp ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ Nivel_educ, data = nlsy)
-m7<-lm(log_ing_h_imp ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE):poly(Nivel_educ,raw=TRUE), data = nlsy)
+m4<-lm(log_ing_h_win ~ poly(Edad,8,raw=TRUE)*Sexo, data = train)
+m5<-lm(log_ing_h_win ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ Sexo, data = train)
+m6<-lm(log_ing_h_win ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ Nivel_educ, data = train)
+m7<-lm(log_ing_h_win ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE):poly(Nivel_educ,raw=TRUE), data = train)
 
 summary(m7)
 
@@ -47,24 +50,24 @@ test$mp6<-predict(m6,newdata = test)
 test$mp7<-predict(m7,newdata = test)
 
 
-with(test,mean((log_ing_h_imp-mp1)^2))
-with(test,mean((log_ing_h_imp-mp2)^2))
-with(test,mean((log_ing_h_imp-mp3)^2))
-with(test,mean((log_ing_h_imp-mp4)^2))
-with(test,mean((log_ing_h_imp-mp5)^2))
-with(test,mean((log_ing_h_imp-mp6)^2))
-with(test,mean((log_ing_h_imp-mp7)^2))
+with(test,mean((log_ing_h_win-mp1)^2))
+with(test,mean((log_ing_h_win-mp2)^2))
+with(test,mean((log_ing_h_win-mp3)^2))
+with(test,mean((log_ing_h_win-mp4)^2))
+with(test,mean((log_ing_h_win-mp5)^2))
+with(test,mean((log_ing_h_win-mp6)^2))
+with(test,mean((log_ing_h_win-mp7)^2))
 
 # Obtener en una tabla
 
 # Calcular el RMSE para cada modelo
-rmse_m1 <- sqrt(mean((test$log_ing_h_imp - test$mp1)^2))
-rmse_m2 <- sqrt(mean((test$log_ing_h_imp - test$mp2)^2))
-rmse_m3 <- sqrt(mean((test$log_ing_h_imp - test$mp3)^2))
-rmse_m4 <- sqrt(mean((test$log_ing_h_imp - test$mp4)^2))
-rmse_m5 <- sqrt(mean((test$log_ing_h_imp - test$mp5)^2))
-rmse_m6 <- sqrt(mean((test$log_ing_h_imp - test$mp6)^2))
-rmse_m7 <- sqrt(mean((test$log_ing_h_imp - test$mp7)^2))
+rmse_m1 <- sqrt(mean((test$log_ing_h_win - test$mp1)^2))
+rmse_m2 <- sqrt(mean((test$log_ing_h_win - test$mp2)^2))
+rmse_m3 <- sqrt(mean((test$log_ing_h_win - test$mp3)^2))
+rmse_m4 <- sqrt(mean((test$log_ing_h_win - test$mp4)^2))
+rmse_m5 <- sqrt(mean((test$log_ing_h_win - test$mp5)^2))
+rmse_m6 <- sqrt(mean((test$log_ing_h_win - test$mp6)^2))
+rmse_m7 <- sqrt(mean((test$log_ing_h_win - test$mp7)^2))
 
 # Número de predictores para cada modelo (excluyendo el intercepto)
 num_pred_m1 <- length(coef(m1)) - 1
@@ -86,12 +89,12 @@ resultados <- data.frame(
 print(resultados)
 
 # Especificacion con el menor error de prediccion
-m6<-lm(log_ing_h_imp ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ Nivel_educ, data = nlsy)
+m6<-lm(log_ing_h_win ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ Nivel_educ, data = train)
 
 # ----------------------------
 
 # Calcular los errores de predicción para el modelo m6
-test$error_m6 <- test$log_ing_h_imp - test$mp6
+test$error_m6 <- test$log_ing_h_win - test$mp6
 
 # Examinar la distribución de los errores de predicción
 hist(test$error_m6, main = "Distribución de Errores de Predicción para el Modelo m6", xlab = "Error de Predicción", breaks = 30, col = "skyblue")
@@ -112,18 +115,18 @@ outliers <- test[test$error_m6 < limite_inferior | test$error_m6 > limite_superi
 print(outliers)
 
 # Graficar predicciones vs. valores reales
-plot(test$log_ing_h_imp, test$mp6, main = "Predicciones vs. Valores Reales (Modelo m6)",
+plot(test$log_ing_h_win, test$mp6, main = "Predicciones vs. Valores Reales (Modelo m6)",
      xlab = "Valores Reales", ylab = "Predicciones", pch = 19, col = "blue")
 abline(0, 1, col = "red")  # Línea de identidad
 
 # Resaltar los outliers en el gráfico
-points(outliers$log_ing_h_imp, outliers$mp6, pch = 19, col = "red")
+points(outliers$log_ing_h_win, outliers$mp6, pch = 19, col = "red")
 
 
 # LOOCV -------------------------------------------
 
-m6f<-log_ing_h_imp ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ Nivel_educ
-m7f<-log_ing_h_imp ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE):poly(Nivel_educ,raw=TRUE)
+m6f<-log_ing_h_win ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ Nivel_educ
+m7f<-log_ing_h_win ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE):poly(Nivel_educ,raw=TRUE)
 
 install.packages("snow")
 library(parallel)
@@ -159,8 +162,4 @@ modelo1 <- train(m7f,
 
 parallel::stopCluster(cluster)
 unregister_dopar()
-
-#H
-
-p<-c(1,2,3)
 
