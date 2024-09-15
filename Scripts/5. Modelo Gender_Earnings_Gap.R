@@ -1,3 +1,4 @@
+# Autor: Diego Cuesta
 #------------------------------------------------------------------------------#
 #----------------------- Punto 4 - Gender earning gap -------------------------#
 #------------------------------------------------------------------------------#
@@ -28,8 +29,8 @@ str(Data_P4)
 # Esto debido a que son categoricas en la GEIH
 
 # 3.1 Se estima la wage gap condicionaal a variables de control por OLS --------
-gender_earnings_gap_2_OLS <- lm(log_ing_h_win ~ Female + Edad + Edad2+ Tamanio_empresa + Trabajo_formal + Independiente + 
-                                  oficio_factor + edu_factor + Horas_trabajadas + Experiencia_anios,data = Data_P4)
+gender_earnings_gap_2_OLS <- lm(log_ing_h_win ~ Female + Edad_win + Edad2+ tfirma_factor + Trabajo_informal + Independiente + 
+                                  oficio_factor + edu_factor + Horas_trabajadas_win + Experiencia_win + estrato_factor+ dummy_jefe,data = Data_P4)
 Coeficiente_interes_2_OLS <-gender_earnings_gap_2_OLS$coefficients[2]
 stargazer(gender_earnings_gap_2_OLS, type = "text")  # Para visualizar en la consola
 stargazer(gender_earnings_gap_2_OLS)                 # Para llevar a LATEX
@@ -37,13 +38,13 @@ stargazer(gender_earnings_gap_2_OLS)                 # Para llevar a LATEX
 # 3.2 Se estima la wage gap condicional a variables de control por FWL ---------
 
 # La primera etapa consiste en estimar la regresion sin la variable de interes y obtener los residuos
-FWL_resid_1 <- residuals(lm(log_ing_h_win ~ Edad + Edad2 +Tamanio_empresa + Trabajo_formal + Independiente + oficio_factor + 
-                       edu_factor + Horas_trabajadas + Experiencia_anios, data = Data_P4)) 
+FWL_resid_1 <- residuals(lm(log_ing_h_win ~Edad_win + Edad2+ tfirma_factor + Trabajo_informal + Independiente + 
+                              oficio_factor + edu_factor + Horas_trabajadas_win + Experiencia_win + estrato_factor+dummy_jefe, data = Data_P4)) 
   
 # La segunda etapa consiste en regresar la variable de interes con respecto al resto de variables de control
 
-FWL_resid_2 <- residuals(lm(Female ~ Edad + Edad2 + Tamanio_empresa + Trabajo_formal + Independiente + oficio_factor + 
-                              edu_factor + Horas_trabajadas + Experiencia_anios, data = Data_P4)) 
+FWL_resid_2 <- residuals(lm(Female ~ Edad_win + Edad2+ tfirma_factor + Trabajo_informal + Independiente + 
+                              oficio_factor + edu_factor + Horas_trabajadas_win + Experiencia_win + estrato_factor+ dummy_jefe, data = Data_P4)) 
 Female      <- FWL_resid_2   # Cambiar el nombre para facilitar la presetnacion de resultados
 
 # Finalmente, se regresan ambos residuos encontrados. Se debería encontrar el mismo coeficiente estimado en OLS
@@ -66,11 +67,11 @@ stargazer(gender_earnings_gap_1,gender_earnings_gap_2_FWL,type = "text",out = "P
 # Se crea una funcion para estimar la regresion usando FWL
 
 Female_funcion<-function(Data,Indice){
-   res_1 <- residuals(lm(log_ing_h_win ~ Edad + Edad2+ Tamanio_empresa + Trabajo_formal + Independiente + oficio_factor + 
-                           edu_factor + Horas_trabajadas + Experiencia_anios, data = Data, subset=Indice)) 
+   res_1 <- residuals(lm(log_ing_h_win ~ Edad_win + Edad2+ tfirma_factor + Trabajo_informal + Independiente + 
+                           oficio_factor + edu_factor + Horas_trabajadas_win + Experiencia_win + estrato_factor+ dummy_jefe, data = Data, subset=Indice)) 
    
-   res_2 <- residuals(lm(Female ~ Edad + Edad2 + Tamanio_empresa + Trabajo_formal + Independiente + oficio_factor + 
-                           edu_factor + Horas_trabajadas + Experiencia_anios, data = Data, subset=Indice))
+   res_2 <- residuals(lm(Female ~ Edad_win + Edad2+ tfirma_factor + Trabajo_informal + Independiente + 
+                           oficio_factor + edu_factor + Horas_trabajadas_win + Experiencia_win + estrato_factor+ dummy_jefe, data = Data, subset=Indice))
    
    coef(lm(res_1 ~ res_2, subset=Indice))[2] # Se retorna el coeficiente de interes
 }
