@@ -177,7 +177,7 @@ png(filename = "Perfil_Salario_Genero.png",width = 1200, height = 600, res = 150
 
 plot(Data_P4$Edad_win, (Data_P4$log_ing_h_win), 
      xlab = "Edad", ylab = "Ln(Salario por hora)", 
-     col = alpha("grey", 0.8), main = "Perfil Salario-Edad por género", 
+     col = alpha("grey", 0.8), #main = "Perfil Salario-Edad por género", 
      xlim = c(15, 75), ylim = c(5, 11),  # Establecer rango y frecuencia en ejes X e Y
      xaxp = c(20, 80, 6), yaxp = c(5, 11, 6))  # Establecer frecuencia en ejes X e Y
 lines(age_seq, predic_Male, col = "red", lwd = 1)  # Línea de predicciones para Hombres
@@ -191,7 +191,6 @@ abline(v = Max_Female, col = "blue", lwd = 2, lty = 1)  # Línea discontinua para
 abline(v = Lim_inf_Female, col = "blue", lwd = 2, lty = 3) 
 abline(v = Lim_sup_Female, col = "blue", lwd = 2, lty = 3) 
 
-# Colocamos leyenda
 legend("topright",                    # posición de la leyenda
        legend = c("Mujer", "Hombre"), # etiquetas
        col = c("blue", "red"),        # colores de las líneas en la leyenda
@@ -199,7 +198,7 @@ legend("topright",                    # posición de la leyenda
        bg = "white")                  # color de fondo de la leyenda
 
 # Agregar pie de página
-#mtext("Lineas verticales continuas: Peak ages para cada sexo. Lineas verticales punteadas: Intervalos de confianza.", side = 1, line = 3.8, adj = 0, cex = 0.6)
+#mtext("Lineas verticales continuas: Peak wages para cada sexo. Lineas verticales: Intervalo de confianza al 95%.", side = 1, line = 3.8, adj = 0, cex = 0.6)
 
 # Agregar etiquetas para las líneas rojas y azules
 text(Max_Male+2, 5, "45,2", col = "red", pos = 4)  # Etiqueta para línea roja
