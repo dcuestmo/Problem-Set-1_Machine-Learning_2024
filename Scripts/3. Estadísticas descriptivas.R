@@ -182,10 +182,10 @@ den_plot_informales <- ggplot(data_webs, aes(Ingreso_hora_imp_win, fill=Trabajo_
        x = "Ingreso por hora",
        y = "Densidad",
        fill = "Tipo de trabajo") +  # Cambia el título de la leyenda a "Tipo de trabajo"
-  geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[Trabajo_formal == "0"])), color = "blue", linetype = "dashed") +  # Línea punteada para la media de formales
-  geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[Trabajo_formal == "1"])), color = "red", linetype = "dashed") +   # Línea punteada para la media de informales
+  geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[Trabajo_formal == "0"])), color = "blue", linetype = "dashed") +  # Línea punteada para la media de informales
+  geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[Trabajo_formal == "1"])), color = "red", linetype = "dashed") +   # Línea punteada para la media de formales
   scale_fill_manual(values = c("0" = "blue", "1" = "red"), 
-                    labels = c("0" = "Formal", "1" = "Informal")) +  # Define los colores y etiquetas de la leyenda
+                    labels = c("0" = "Informal", "1" = "Formal")) +  # Define los colores y etiquetas de la leyenda
   guides(fill = guide_legend(title = NULL, position = "bottom")) +  # Mueve la leyenda a la parte inferior
   theme(
     plot.title = element_text(size = 10),  # Cambia el tamaño y estilo del título
