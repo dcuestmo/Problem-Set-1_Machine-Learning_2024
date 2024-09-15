@@ -1,3 +1,4 @@
+# Universidad de los Andes
 # Problem-Set-1_Machine-Learning_2024
 
 **Integrantes**
@@ -12,9 +13,9 @@ En primer lugar, fuera de las carpetas principales, se encuentran los archivos .
 
 Con respecto a las carpetas, estas contienen la siguiente información:
 
-Documento: Esta carpeta almacena el documento final en .pdf. Para su realización se empleo la herramienta Overleaf de Latex, por lo que este repositorio no permite la reproducibilidad de dicho documento final.
+**Documento:**  Esta carpeta almacena el documento final en .pdf. Para su realización se empleo la herramienta Overleaf de Latex, por lo que este repositorio no permite la reproducibilidad de dicho documento final.
 
-Scripts: En esta carpeta están los scripts utilizados para generar todos los resultados.
+**Scripts:** En esta carpeta están los scripts utilizados para generar todos los resultados.
 
 0. Script_Base: Contiene el código principal, se determina el directorio de trabajo, se cargan los paquetes necesarios y llama a los otros scripts. Para su reproducibilidad es importante determinar la ruta de trabajo. En la línea 50 puede cambiar "otro_directorio" por la ruta en donde replico el repositorio.
 1. Scraping: El código realiza el proceso de web scraping para conseguir los datos.
@@ -25,8 +26,7 @@ Scripts: En esta carpeta están los scripts utilizados para generar todos los re
 6. Modelo Gender_Earnings_Gap: El código realiza las estimaciones y análisis de datos de la sección 4 del Problem Set (Brecha salarial diferenciando por género).
 
 
-En el repositorio, la carpeta Base_Datos contiene las tablas consolidadas con la información obtenida tras el proceso de extracción de datos, facilitando su carga y uso a lo largo del proyecto. Además, permite la evaluación de los datos mediante herramientas externas.
+**Base_Datos**: En esta carperta se almacena la base de datos ajustada que es empleada para realizar el taller: "base_final.rds". Adicional contiene las tablas consolidadas con la información obtenida tras el proceso de extracción de datos, facilitando su carga y uso a lo largo del proyecto.
 
-La carpeta Graficas almacena las visualizaciones que ayudaron en el análisis de la información y permitieron la evaluación visual de los resultados obtenidos durante el taller.
-La carpeta Latex almacena los documentos .tex con los resultados de las diferentes regresiones para poder ser posteriormente compiladas en la herramienta de edición de texto Latex. 
-Por último, la carpeta Scripts contiene el código desarrollado para resolver cada punto del proyecto, incluyendo un script inicial que optimiza la conexión entre los miembros del equipo y soluciona problemas de codificación que pudieran afectar el desarrollo del taller.
+**Graficas**: Esta carpeta almacena las visualizaciones que ayudaron en el análisis de la información y permitieron la evaluación visual de los resultados obtenidos durante el taller. 
+**Latex** Esta carpeta almacena los documentos .tex con los resultados de las diferentes regresiones para poder ser posteriormente compiladas en la herramienta de edición de texto overleraf. 
