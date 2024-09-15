@@ -145,12 +145,61 @@ den_plot <- ggplot(data_webs, aes(Ingreso_hora_imp_win, fill=sex)) +
        fill = "Sexo") +
   geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[sex == "Hombre"])), color = "blue", linetype = "dashed") +  # Línea punteada para la media de hombres
   geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[sex == "Mujer"])), color = "red", linetype = "dashed") +   # Línea punteada para la media de mujeres
-  guides(fill = guide_legend(title = NULL)) +  # Elimina el título de la leyenda
+  guides(fill = guide_legend(title = NULL, position = "bottom")) +  # Mueve la leyenda a la parte inferior
   theme(
-    plot.title = element_text(size = 10)  # Cambia el tamaño y estilo del título
+    plot.title = element_text(size = 10),  # Cambia el tamaño y estilo del título
+    legend.position = "bottom"  # Asegura que la leyenda esté en la parte inferior
   )
-png("Caja_sexo.png") # Formato grafica
-den_plot
-dev.off() # Cierra la grafica
 
+# Gráficas de distribución del ingreso para independientes
+data_webs$Independiente <- as.factor(data_webs$Independiente)
+
+den_plot_independientes <- ggplot(data_webs, aes(Ingreso_hora_imp_win, fill=Independiente)) +
+  geom_density(alpha = 0.4) +  # Densidad superpuesta con transparencia
+  theme_minimal() +  # Tema minimalista
+  labs(title = "Gráfico de densidad del ingreso por hora por tipo de trabajador",
+       x = "Ingreso por hora",
+       y = "Densidad",
+       fill = "Tipo de trabajador") +  # Cambia "Sexo" a "Tipo de trabajador"
+  geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[Independiente == "0"])), color = "blue", linetype = "dashed") +  # Línea punteada para la media de trabajadores dependientes
+  geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[Independiente == "1"])), color = "red", linetype = "dashed") +   # Línea punteada para la media de trabajadores a cuenta propia
+  scale_fill_manual(values = c("0" = "blue", "1" = "red"), 
+                    labels = c("0" = "Dependientes", "1" = "Independientes")) +  # Define los colores y etiquetas de la leyenda
+  guides(fill = guide_legend(title = NULL, position = "bottom")) +  # Mueve la leyenda a la parte inferior
+  theme(
+    plot.title = element_text(size = 10),  # Cambia el tamaño y estilo del título
+    legend.position = "bottom"  # Asegura que la leyenda esté en la parte inferior
+  )
+
+
+# Gráficas de distribución del ingreso para informales
+data_webs$Trabajo_formal <- as.factor(data_webs$Trabajo_formal)
+
+den_plot_informales <- ggplot(data_webs, aes(Ingreso_hora_imp_win, fill=Trabajo_formal)) +
+  geom_density(alpha = 0.4) +  # Densidad superpuesta con transparencia
+  theme_minimal() +  # Tema minimalista
+  labs(title = "Gráfico de densidad del ingreso por hora por formalidad",
+       x = "Ingreso por hora",
+       y = "Densidad",
+       fill = "Tipo de trabajo") +  # Cambia el título de la leyenda a "Tipo de trabajo"
+  geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[Trabajo_formal == "0"])), color = "blue", linetype = "dashed") +  # Línea punteada para la media de formales
+  geom_vline(aes(xintercept = mean(Ingreso_hora_imp_win[Trabajo_formal == "1"])), color = "red", linetype = "dashed") +   # Línea punteada para la media de informales
+  scale_fill_manual(values = c("0" = "blue", "1" = "red"), 
+                    labels = c("0" = "Formal", "1" = "Informal")) +  # Define los colores y etiquetas de la leyenda
+  guides(fill = guide_legend(title = NULL, position = "bottom")) +  # Mueve la leyenda a la parte inferior
+  theme(
+    plot.title = element_text(size = 10),  # Cambia el tamaño y estilo del título
+    legend.position = "bottom"  # Asegura que la leyenda esté en la parte inferior
+  )
+
+##Combinar graficas
+densidad_tipo <- den_plot | den_plot_informales | den_plot_independientes
+
+# Establecer el directorio de trabajo para guardar la gráfica
+setwd(paste0(wd, "/Graficas"))
+
+# Guardar la gráfica combinada en un archivo PNG
+png("Densidad_tipo.png", width = 2400, height = 800) # Ajusta el tamaño según sea necesario
+densidad_tipo
+dev.off() # Cierra la gráfica
 
