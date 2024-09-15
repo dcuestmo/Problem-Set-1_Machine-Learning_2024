@@ -9,7 +9,7 @@ data_webs <- import(file = "base_final.rds")
 
 # 1. Grafica de correlacion entre ingreso y edad ------------------------------
 
-      # Crear la gráfica de dispersión con la línea de promedio
+      # Mirar la gráfica de dispersión con la línea de promedio
       data_means <- data_webs %>%
       group_by(Edad_win) %>%
       summarise(mean_log_ing_h = mean(log_ing_h_win, na.rm = TRUE))
@@ -172,7 +172,7 @@ data_webs <- import(file = "base_final.rds")
   writeLines(regression_table, "tabla_final.tex") #Escribir el contenido modificado de nuevo al archivo
 
 
-  #5. Valor maximo -----------------------------------------------------------
+  #7. Valor maximo -----------------------------------------------------------
   
   #i. Modelo sin controles
   
@@ -222,7 +222,7 @@ data_webs <- import(file = "base_final.rds")
       Peak_age_mod_controles
       
   
-  # 6. Calculo de los errores de los modelos ----------------------------------
+  # 8. Calculo de los errores de los modelos ----------------------------------
   
     # Realiza predicciones con el modelo
     data_webs$predicted <- predict(model_Age_wage, newdata = data_webs) #modelo sencillo
@@ -265,7 +265,7 @@ data_webs <- import(file = "base_final.rds")
     (rmse_cont <-sqrt(mean(err2_cont, na.rm = TRUE))) # 0.40
     
   
-  # 6. BOOTSTRAP --------------------------------------------------------------
+  # 9. BOOTSTRAP --------------------------------------------------------------
 
 
   #i. Modelo simple
@@ -292,11 +292,14 @@ data_webs <- import(file = "base_final.rds")
       geom_histogram(bins = 50, color = "white", fill = "grey") +
       labs(x ='Edad', y='Frecuencia', title = "Modelo simple")+
       geom_vline(aes(xintercept = Peak_age_mod_simple), color = "red", linewidth = 1)+
+      labs(title = "Panel A: Modelo sin controles",
+           x = "Edad",
+           y = "Ln(Ingreso por hora)") +
       theme_minimal() +
       theme(
-        plot.title = element_text(size = 14, face = "bold"),      # Aumenta el tamaño del título
-        axis.title.x = element_text(size = 14),                   # Aumenta el tamaño del label del eje X
-        axis.title.y = element_text(size = 14)                    # Aumenta el tamaño del label del eje Y
+        plot.title = element_text(size = 20, face = "bold"),      # Aumenta el tamaño del título
+        axis.title.x = element_text(size = 20),                   # Aumenta el tamaño del label del eje X
+        axis.title.y = element_text(size = 20)                    # Aumenta el tamaño del label del eje Y
       )  
     Hist_mod_simp
   
@@ -310,9 +313,9 @@ data_webs <- import(file = "base_final.rds")
          y = "Log(Ingreso por hora)") +
     theme_minimal() +
     theme(
-      plot.title = element_text(size = 14, face = "bold"),      # Aumenta el tamaño del título
-      axis.title.x = element_text(size = 14),                   # Aumenta el tamaño del label del eje X
-      axis.title.y = element_text(size = 14)                    # Aumenta el tamaño del label del eje Y
+      plot.title = element_text(size = 20, face = "bold"),      # Aumenta el tamaño del título
+      axis.title.x = element_text(size = 20),                   # Aumenta el tamaño del label del eje X
+      axis.title.y = element_text(size = 20)                    # Aumenta el tamaño del label del eje Y
     )
   print(Age_wage_P_plot)
   
@@ -340,16 +343,19 @@ data_webs <- import(file = "base_final.rds")
     Dist_Peak_age_mod_cont <- as.data.frame(boot_results_mod_cont$t)
     hist(Dist_Peak_age_mod_cont$V1) #distribucion del valor maximo de la edad con bootstrap
     
-    ## Histograma - Modelo Simple
+    ## Histograma - Modelo con controles
     Hist_mod_cont <- ggplot(Dist_Peak_age_mod_cont, aes(x = V1)) +
       geom_histogram(bins = 50, color = "white", fill = "grey") +
       labs(x = 'Edad', y = 'Frecuencia', title = "Modelo con controles") +
       geom_vline(aes(xintercept = Peak_age_mod_cont), color = "red", linewidth = 1) +
+      labs(title = "Panel B: Modelo con controles",
+           x = "Edad",
+           y = "Ln(Ingreso por hora)") +
       theme_minimal() +
       theme(
-        plot.title = element_text(size = 14, face = "bold"),      # Aumenta el tamaño del título
-        axis.title.x = element_text(size = 14),                   # Aumenta el tamaño del label del eje X
-        axis.title.y = element_text(size = 14)                    # Aumenta el tamaño del label del eje Y
+        plot.title = element_text(size = 20, face = "bold"),      # Aumenta el tamaño del título
+        axis.title.x = element_text(size = 20),                   # Aumenta el tamaño del label del eje X
+        axis.title.y = element_text(size = 20)                    # Aumenta el tamaño del label del eje Y
       )
     Hist_mod_cont
     
@@ -366,9 +372,9 @@ data_webs <- import(file = "base_final.rds")
            y = "Ln(Ingreso por hora)") +
       theme_minimal()   +
       theme(
-        plot.title = element_text(size = 14, face = "bold"),      # Aumenta el tamaño del título
-        axis.title.x = element_text(size = 14),                   # Aumenta el tamaño del label del eje X
-        axis.title.y = element_text(size = 14)                    # Aumenta el tamaño del label del eje Y
+        plot.title = element_text(size = 20, face = "bold"),      # Aumenta el tamaño del título
+        axis.title.x = element_text(size = 20),                   # Aumenta el tamaño del label del eje X
+        axis.title.y = element_text(size = 20)                    # Aumenta el tamaño del label del eje Y
       )
     print(Age_wage_P_plot_cont)
     
