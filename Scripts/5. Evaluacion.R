@@ -4,10 +4,7 @@
 #------------------------------------------------------------------------------#
 
 # Inicializacion de la base ---------------------------------
-setwd("C:/Users/Steven Ramirez/Downloads/Problem-Set-1_Machine-Learning_2024-main/Problem-Set-1_Machine-Learning_2024-main")
 source("Scripts/0. Script_Base.R")
-
-setwd("C:/Users/Steven Ramirez/Downloads/Problem-Set-1_Machine-Learning_2024-main/Problem-Set-1_Machine-Learning_2024-main")
 nlsy <- readRDS("Base_Datos/base_final.rds")
 # Verificar que se cargó correctamente
 summary(nlsy)
@@ -160,15 +157,19 @@ ggplot(nlsy, aes(x = residuals, y = leverage)) +
 nlsy_2<-nlsy %>% mutate(m1_std_residuals= studres(m3) )
 
 
-ggplot(nlsy_2 , aes(y = m1_std_residuals , x = Direccion, color=Nivel_educ, shape= as.factor(Sexo))) +
+ggplot(nlsy_2 , aes(y = m1_std_residuals , x = Edad, color=Nivel_educ, shape= as.factor(Sexo))) +
   geom_point() + # add points
   theme_bw() + #black and white theme
-  labs(x = "Observations",  
+  labs(x = "Age",  
        y = "Residuals",
        title = "") # labels
 
 install.packages("skimr")  # Instalar el paquete (si no lo tienes ya)
 library(skimr)
+
+skim(nlsy$log_ing_h_win)
+summary(nlsy$log_ing_h_win)
+
 
 
 # LOOCV -------------------------------------------
