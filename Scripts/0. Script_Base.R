@@ -40,13 +40,11 @@ ifelse(grepl("HP", getwd()), # Diego
        ifelse(grepl("JULIETH", getwd()), # Julieth1
               wd <- "C:/Users/JULIETH/Documents/GitHub/Problem-Set-1_Machine-Learning_2024",
               ifelse(grepl("Usuario", getwd()), # Julieth2
-                     wd <- "C:/Users/Usuario/OneDrive - Universidad de los andes/Documentos/GitHub/Problem-Set-1_Machine-Learning_2024",
-                     ifelse(grepl("hncar", getwd()), 
                             wd <- "C:/Users/hncar/Documents/GitHub/Problem-Set-1_Machine-Learning_2024",
-                            ifelse(grepl("C:/Users/User", getwd()), 
+                            ifelse(grepl("C:/Users/User", getwd()),  # Henry
                                    wd <- "C:/Users/User/OneDrive - Universidad de los Andes/Big Data y Machine Learning/Problem_set_1/Problem_set_1",
                                    ifelse(grepl("/Users/aleja/", getwd()), 
-                                          wd <- "Directorio",
+                                          wd <- "Directorio",  # Jorge
                                           ifelse(grepl("Steven Ramirez", getwd()), 
                                                  wd <- "C:/Users/Steven Ramirez/OneDrive - Universidad de los Andes/Grupo - EconometrÃ­a 1/Escritorio/Big Data/Problem-Set-1_Machine-Learning_2024",
                                                  wd <- "otro_directorio")))))))
@@ -54,10 +52,26 @@ ifelse(grepl("HP", getwd()), # Diego
 
 # 2. Script de Web-scraping ----------------------------------------------------
 
-# El script: "01_web_scraping.R". Realiza el proceso de web scraping para conseguir los datos
+# El script: "1. Scraping.R" realiza el proceso de web scraping para conseguir los datos
 setwd(paste0(wd,"/scripts"))
 source("1. Scraping.R")
 
-setwd(paste0(wd,"/scripts"))
+# El script: "2. Filtro Base y seleccion de variables.R" realiza  limpieza de la base de datos, mantiene las variables de interés y hace imputación de datos en missing values. 
+# Además, guarda la base de datos de interés (base_final.rds) que sera usada en los siguientes códigos.
 source("2. Filtro Base y seleccion de variables.R")
 
+# El script: "3. Estadísticas descriptivas" realiza el análisis descriptivo de los datos. 
+setwd(paste0(wd,"/scripts"))
+source("3. Estadísticas descriptivas.R")
+
+# El script: "4. Modelo ingreso-edad" realiza las estimaciones y análisis de datos de la sección 3 del Problem Set (Teoría edad-salario) 
+setwd(paste0(wd,"/scripts"))
+source("4. Modelo ingreso-edad.R")
+
+# El script: "5. Evaluacion" realiza las estimaciones y análisis de datos de la sección 5 del Problem Set (Predicciones del ingreso) 
+setwd(paste0(wd,"/scripts"))
+source("5. Evaluacion.R")
+
+# El script: "6. Modelo Gender_Earnings_Gap" realiza las estimaciones y análisis de datos de la sección 4 del Problem Set (Brecha salarial diferenciando por género) 
+setwd(paste0(wd,"/scripts"))
+source("6. Modelo Gender_Earnings_Gap.R")
