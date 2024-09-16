@@ -32,7 +32,7 @@ glimpse(nlsy)
 m1<-lm(log_ing_h_win ~ Edad + Edad2, data = train)
 m2<-lm(log_ing_h_win ~ Sexo, data = train)
 m3<-lm(log_ing_h_win ~ Sexo + Edad + Edad2, data = train)
-m3_1 <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + Trabajo_informal + Independiente  + Horas_trabajadas_win + Experiencia_win, data = train)
+m3_1 <- lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + tfirma_factor + Trabajo_informal + oficio_factor + Independiente + Horas_trabajadas_win + Experiencia_win, data = train)
 
 
 # Otros modelos poly(educ,8,raw=TRUE
@@ -111,26 +111,23 @@ print(tabla_latex, type = "latex", file = "tabla_resultados.tex", include.rownam
 # ----------------------------
 
 # Especificacion con el menor error de prediccion
-m6<-lm(log_ing_h_win ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ Nivel_educ, data = nlsy)
-
-# Calcular los errores de predicción para el modelo m6
-test$residuals_m6 <- test$log_ing_h_win - test$mp6
+m3<-lm(log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + tfirma_factor + Trabajo_informal + Independiente + Horas_trabajadas_win + Experiencia_win, data = nlsy)
 
 ggplot(data= test, 
-       mapping = aes(x=residuals_m6)) +
+       mapping = aes(x=residuals_m3)) +
   theme_bw() + 
   geom_density() +
-  xlab("Residuales del modelo 6")
+  xlab("Residuales del modelo 3")
 
 nlsy <- nlsy %>%
   ungroup() %>%
-  mutate(leverage = hatvalues(m6))
+  mutate(leverage = hatvalues(m3))
 
 # leverage 
-nlsy<- nlsy %>% mutate(leverage = hatvalues(m6))
+nlsy<- nlsy %>% mutate(leverage = hatvalues(m3))
 
 # residuals
-nlsy<- nlsy %>% mutate(residuals = m6$residuals)
+nlsy<- nlsy %>% mutate(residuals = m3$residuals)
 
 ggplot(nlsy , aes(y = leverage , x = residuals  )) +
   geom_point() + # add points
@@ -145,11 +142,39 @@ p
 cutt <- 3*p
 cutt
 
+nlsy_1 <- nlsy %>%
+  mutate(outlier = ifelse(leverage > cutt & abs(residuals) > 3, "Outlier", "Not Outlier"))
+
+# Plot the points with specific marking for the outliers
+ggplot(nlsy, aes(x = residuals, y = leverage)) +
+  geom_point(aes(color = outlier), size = 2) + # Points colored by outlier status
+  theme_bw() + # Black and white theme
+  labs(x = "Residuals",  
+       y = "Leverage",
+       title = "Leverage vs Residuals with Outliers Marked") + # Labels
+  scale_color_manual(values = c("Not Outlier" = "black", "Outlier" = "red")) + # Color for points
+  theme(legend.title = element_blank()) # Hide legend title
+
+# Studentized Residuals
+
+nlsy_2<-nlsy %>% mutate(m1_std_residuals= studres(m3) )
+
+
+ggplot(nlsy_2 , aes(y = m1_std_residuals , x = Direccion, color=Nivel_educ, shape= as.factor(Sexo))) +
+  geom_point() + # add points
+  theme_bw() + #black and white theme
+  labs(x = "Observations",  
+       y = "Residuals",
+       title = "") # labels
+
+install.packages("skimr")  # Instalar el paquete (si no lo tienes ya)
+library(skimr)
+
 
 # LOOCV -------------------------------------------
 
 m6f<-log_ing_h_win ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ poly(Experiencia,8,raw=TRUE)+ Nivel_educ
-m5f<-log_ing_h_win ~ poly(Edad,8,raw=TRUE):poly(Experiencia,8,raw=TRUE)+ Sexo
+m3f<-log_ing_h_win ~ Edad_win + Edad2 + Mujer + estrato_factor + dummy_jefe + edu_factor + tfirma_factor + Trabajo_informal + oficio_factor + Independiente + Horas_trabajadas_win + Experiencia_win
 
 install.packages("snow")
 library(parallel)
@@ -185,7 +210,6 @@ modelo1 <- caret::train(
 
 # Detener clúster paralelo y desregistrar el paralelismo solo una vez
 parallel::stopCluster(cluster)
-doParallel::registerDoSEQ()  # Regresar a la ejecución secuencial
 
 # Limpiar el entorno de clústeres
 rm(cluster)
@@ -195,7 +219,11 @@ modelo1
 score1<-RMSE(modelo1$pred$pred, nlsy_sample$log_ing_h_win)
 score1
 
-# -----------------------------------------------------------------------------
+#-------------------------------------------------------
+
+# Seleccionar una muestra más pequeña de observaciones para reducir el tiempo de ejecución
+set.seed(123)  # Fijar una semilla para reproducibilidad
+nlsy_sample <- nlsy[sample(nrow(nlsy), 16000), ]  # Usar una muestra de 100 observaciones
 
 # Crear y registrar el clúster de paralelismo solo una vez
 cluster <- parallel::makeCluster(parallel::detectCores() - 1, type = "SOCK")
@@ -208,8 +236,8 @@ ctrl <- trainControl(
 )
 
 # Entrenar el modelo utilizando el método de regresión lineal (lm)
-modelo2 <- caret::train(
-  m5f,
+modelo1 <- caret::train(
+  m3f,
   data = nlsy_sample,  # Utilizar la muestra de 100 observaciones
   method = 'lm', 
   trControl = ctrl
@@ -217,14 +245,16 @@ modelo2 <- caret::train(
 
 # Detener clúster paralelo y desregistrar el paralelismo solo una vez
 parallel::stopCluster(cluster)
-doParallel::registerDoSEQ()  # Regresar a la ejecución secuencial
 
 # Limpiar el entorno de clústeres
 rm(cluster)
 gc()  # Llamar a la recolección de basura para liberar memoria
 
-modelo2
-score2<-RMSE(modelo2$pred$pred, nlsy_sample$log_ing_h_win)
-score2
+modelo3
+score3<-RMSE(modelo3$pred$pred, nlsy_sample$log_ing_h_win)
+score3
+
+
+
 
 
