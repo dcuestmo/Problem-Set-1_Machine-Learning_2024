@@ -159,11 +159,6 @@ library(progress)
 rm(cluster)
 gc() 
 
-# Seleccionar una muestra más pequeña de observaciones para reducir el tiempo de ejecución
-set.seed(123)  # Fijar una semilla para reproducibilidad
-nlsy_sample <- nlsy[sample(nrow(nlsy), 16000), ]  # Usar una muestra de 100 observaciones
-
-
 #-------------------------------------------------------
 
 # Seleccionar una muestra más pequeña de observaciones para reducir el tiempo de ejecución
@@ -230,6 +225,6 @@ gc()  # Llamar a la recolección de basura para liberar memoria
 
 modelo2
 score2<-RMSE(modelo2$pred$pred, nlsy_sample$log_ing_h_win)
-score1
+score2
 
 
